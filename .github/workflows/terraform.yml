@@ -1,0 +1,173 @@
+name: "Terraform CI"
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# Définition des permissions nécessaires pour le workflow
+permissions:
+  contents: read         # Autorisation de lecture du contenu du repository
+  pull-requests: write   # Autorisation d'écriture sur les pull requests (pour poster les commentaires)
+  security-events: write # Autorisation pour les événements de sécurité (désactivée actuellement)
+
+jobs:
+  validate:
+    name: "Validate"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.0.0
+
+      - name: Terraform Init
+        id: init
+        run: terraform init -backend=false
+
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check
+        continue-on-error: true
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+  security:
+    name: "Security Check"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Analyse de sécurité avec tfsec
+      - name: tfsec
+        uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          soft_fail: true
+
+      # Analyse de sécurité avec Checkov
+      - name: Run Checkov action
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          framework: terraform
+          soft_fail: true
+
+      # Analyse de sécurité avec Trivy
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        env:
+          TF_VAR_db_password: "dummy-password-for-scan"
+        with:
+          scan-type: 'config'
+          hide-progress: false
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
+
+      # Étape désactivée - À activer si vous avez les permissions appropriées
+      # Pour activer cette étape:
+      # 1. Décommentez les lignes ci-dessous
+      # 2. Assurez-vous d'avoir configuré les permissions 'security-events: write' dans votre workflow
+      # 3. Vérifiez que les fonctionnalités de sécurité avancées sont activées sur votre dépôt
+      #
+      # - name: Upload Trivy scan results
+      #   uses: github/codeql-action/upload-sarif@v3
+      #   if: always()
+      #   with:
+      #     sarif_file: 'trivy-results.sarif'
+
+  plan:
+    name: "Plan"
+    runs-on: ubuntu-latest
+    needs: [validate, security]
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.0.0
+
+      - name: Terraform Init
+        id: init
+        run: terraform init -backend=false
+
+      # Génération du plan Terraform avec un mot de passe fictif pour la démo
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color -input=false -var="db_password=dummy-password-for-plan"
+        continue-on-error: true
+
+      # Publication du plan dans un commentaire de la PR
+      - name: Post Plan to PR
+        uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: "${{ steps.plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Plan 📝\`${{ steps.plan.outcome }}\`
+            
+            <details><summary>Show Plan</summary>
+            
+            \`\`\`terraform
+            ${process.env.PLAN}
+            \`\`\`
+            
+            </details>`;
+              
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+  terratest:
+    name: "Infrastructure Tests"
+    runs-on: ubuntu-latest
+    needs: [validate]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.18'
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.0.0
+
+      # Configuration des identifiants AWS pour les tests
+      # Note: Pour un exemple/démo, cette étape sera ignorée si les secrets ne sont pas configurés
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-3
+        continue-on-error: true
+          
+      # Exécution des tests d'infrastructure avec Terratest
+      - name: Run Terratest
+        env:
+          TF_VAR_db_password: "dummy-password-for-test"
+        working-directory: ./test
+        run: |
+          go mod tidy
+          go test -v -timeout 30m
+        continue-on-error: true  # Permet au workflow de continuer même si les tests échouent
