@@ -27,6 +27,7 @@ variable "db_password" {
 variable "db_subnet_group" {
   description = "Nom du groupe de sous-réseaux pour RDS"
   type        = string
+  default     = "my-db-subnet-group"
 }
 
 variable "vpc_security_group_ids" {

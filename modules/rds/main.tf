@@ -17,7 +17,7 @@ resource "aws_db_instance" "main" {
   engine               = "mysql"  # Moteur de base de données
   engine_version       = "8.0"  # Version de MySQL
   instance_class       = var.db_instance_class  # Type d'instance
-  db_name                   = var.db_name  # Nom de la base de données
+  db_name              = var.db_name  # Nom de la base de données
   username             = var.db_username  # Nom d'utilisateur
   password             = var.db_password  # Mot de passe
   parameter_group_name = "default.mysql8.0"  # Groupe de paramètres par défaut

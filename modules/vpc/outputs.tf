@@ -29,3 +29,15 @@ output "nat_id" {
   description = "L'ID de la NAT Gateway"
   value       = aws_nat_gateway.nat.id
 }
+
+output "private_subnets" {
+  value = aws_subnet.private.*.id
+}
+
+output "public_subnets" {
+  value = aws_subnet.public.*.id
+}
+
+output "default_security_group_id" {
+  value = aws_security_group.default.id
+}

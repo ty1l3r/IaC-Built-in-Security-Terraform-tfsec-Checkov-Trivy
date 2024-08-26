@@ -23,3 +23,17 @@ output "web_private_ips" {
   description = "Les adresses IP privées des instances WordPress"
   value       = aws_instance.web_private[*].private_ip
 }
+
+output "instance_ids" {
+  value = aws_instance.web_private[*].id
+  description = "List of IDs of the WordPress instances created in the private subnets"
+}
+output "bastion_security_group_id" {
+  description = "ID du Security Group pour le Bastion Host"
+  value       = var.bastion_security_group_id
+}
+
+output "web_security_group_id" {
+  description = "ID du Security Group pour les instances WordPress"
+  value       = var.web_security_group_id
+}

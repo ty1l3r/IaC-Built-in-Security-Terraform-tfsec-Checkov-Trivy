@@ -76,7 +76,7 @@ resource "aws_nat_gateway" "nat" {
 
 # Création de l'IP Elastic pour la NAT Gateway
 resource "aws_eip" "nat" {
-  vpc = true  # Indique que l'IP Elastic est pour une NAT Gateway
+  domain = "vpc"  # Indique que l'IP Elastic est pour une NAT Gateway
 
   tags = {
     Name = "NATElasticIP"
