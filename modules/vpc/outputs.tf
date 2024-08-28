@@ -38,6 +38,8 @@ output "public_subnets" {
   value = aws_subnet.public.*.id
 }
 
-output "default_security_group_id" {
-  value = aws_security_group.default.id
+
+output "vpc_security_group_ids" {
+  description = "L'ID du Security Group par défaut pour le VPC"
+  value       = aws_security_group.vpc.id
 }

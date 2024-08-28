@@ -2,9 +2,9 @@
 
 # Création du VPC
 resource "aws_vpc" "main" {
-  cidr_block           = var.vpc_cidr  # Plage d'adresses IP pour le VPC
-  enable_dns_support   = true          # Activer le support DNS
-  enable_dns_hostnames = true          # Activer les noms d'hôtes DNS
+  cidr_block           = var.vpc_cidr
+  enable_dns_support   = true
+  enable_dns_hostnames = true
   tags = {
     Name = "MainVPC"
   }
@@ -12,8 +12,7 @@ resource "aws_vpc" "main" {
 
 # Création de la passerelle Internet (Internet Gateway)
 resource "aws_internet_gateway" "igw" {
-  vpc_id = aws_vpc.main.id  # Attache l'IGW au VPC
-
+  vpc_id = aws_vpc.main.id
   tags = {
     Name = "MainIGW"
   }
@@ -23,8 +22,8 @@ resource "aws_internet_gateway" "igw" {
 resource "aws_subnet" "public" {
   count             = length(var.public_subnets)
   vpc_id            = aws_vpc.main.id
-  cidr_block        = element(var.public_subnets, count.index)  # Plage d'adresses IP pour le sous-réseau public
-  availability_zone = element(var.availability_zones, count.index)  # Assigner le sous-réseau à une AZ
+  cidr_block        = element(var.public_subnets, count.index)
+  availability_zone = element(var.availability_zones, count.index)
 
   tags = {
     Name = "PublicSubnet-${count.index + 1}"
@@ -35,8 +34,8 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "private" {
   count             = length(var.private_subnets)
   vpc_id            = aws_vpc.main.id
-  cidr_block        = element(var.private_subnets, count.index)  # Plage d'adresses IP pour le sous-réseau privé
-  availability_zone = element(var.availability_zones, count.index)  # Assigner le sous-réseau à une AZ
+  cidr_block        = element(var.private_subnets, count.index)
+  availability_zone = element(var.availability_zones, count.index)
 
   tags = {
     Name = "PrivateSubnet-${count.index + 1}"
@@ -48,8 +47,8 @@ resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
   route {
-    cidr_block = "0.0.0.0/0"  # Routage du trafic vers Internet
-    gateway_id = aws_internet_gateway.igw.id  # Utiliser l'Internet Gateway pour ce routage
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
   }
 
   tags = {
@@ -66,8 +65,8 @@ resource "aws_route_table_association" "public_assoc" {
 
 # Création de la NAT Gateway (dans le public subnet)
 resource "aws_nat_gateway" "nat" {
-  allocation_id = aws_eip.nat.id  # Associer la NAT Gateway à une IP Elastic
-  subnet_id     = aws_subnet.public[0].id  # Placer la NAT Gateway dans un sous-réseau public
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public[0].id
 
   tags = {
     Name = "MainNAT"
@@ -76,7 +75,7 @@ resource "aws_nat_gateway" "nat" {
 
 # Création de l'IP Elastic pour la NAT Gateway
 resource "aws_eip" "nat" {
-  domain = "vpc"  # Indique que l'IP Elastic est pour une NAT Gateway
+  domain = "vpc"
 
   tags = {
     Name = "NATElasticIP"
@@ -88,8 +87,8 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
   route {
-    cidr_block     = "0.0.0.0/0"  # Routage du trafic vers Internet
-    nat_gateway_id = aws_nat_gateway.nat.id  # Utiliser la NAT Gateway pour ce routage
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat.id
   }
 
   tags = {

@@ -13,8 +13,8 @@ module "rds" {
   db_name               = var.db_name
   db_username           = var.db_username
   db_password           = var.db_password
-  db_subnet_group       = module.vpc.db_subnet_group_name  # Notez que cela doit provenir d'un module ou être défini comme une variable dans le root module
-  vpc_security_group_ids = module.vpc.security_group_ids
+  db_subnet_group       = var.db_subnet_group # Notez que cela doit provenir d'un module ou être défini comme une variable dans le root module
+  vpc_security_group_ids = module.vpc.vpc_security_group_ids
   multi_az              = var.multi_az
   subnet_ids            = module.vpc.private_subnet_ids
   create_read_replica   = var.create_read_replica

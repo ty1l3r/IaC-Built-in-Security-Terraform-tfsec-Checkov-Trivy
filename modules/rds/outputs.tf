@@ -26,7 +26,7 @@ output "rds_instance_endpoint" {
 
 # Output de la réplique en lecture si elle est créée
 output "rds_read_replica_endpoint" {
-  value       = var.create_read_replica ? aws_db_instance.read_replica.endpoint : null
+  value       = var.create_read_replica && length(aws_db_instance.read_replica) > 0 ? aws_db_instance.read_replica[0].endpoint : null
   description = "Endpoint de la réplique en lecture, si créée"
 }
 

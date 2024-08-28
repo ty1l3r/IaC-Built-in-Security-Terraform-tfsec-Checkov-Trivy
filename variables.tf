@@ -8,7 +8,6 @@ variable "create_read_replica" {
 }
 
 
-
 # Type d'instance pour le Bastion Host
 variable "bastion_instance_type" {
   description = "Type d'instance pour le Bastion Host"
@@ -114,4 +113,16 @@ variable "db_password" {
   description = "Password for the RDS database"
   type        = string
   sensitive   = true
+}
+
+variable "db_subnet_group" {
+  description = "Nom du groupe de sous-réseaux pour RDS"
+  type        = any
+  default     = "my-db-subnet-group"
+}
+
+variable "vpc_security_group_name" {
+  description = "Nom du Security Group pour le VPC"
+  type        = string
+  default     = "vpc_security_group"  # Vous pouvez définir un nom par défaut ici
 }
