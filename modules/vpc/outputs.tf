@@ -24,22 +24,14 @@ output "igw_id" {
   value       = aws_internet_gateway.igw.id
 }
 
-# Output pour l'ID de la NAT Gateway
-output "nat_id" {
-  description = "L'ID de la NAT Gateway"
-  value       = aws_nat_gateway.nat.id
+# Output pour les IDs des NAT Gateways
+output "nat_ids" {
+  description = "Les IDs des NAT Gateways"
+  value       = aws_nat_gateway.nat[*].id
 }
 
-output "private_subnets" {
-  value = aws_subnet.private.*.id
-}
-
-output "public_subnets" {
-  value = aws_subnet.public.*.id
-}
-
-
+# Output pour l'ID du Security Group par défaut pour le VPC
 output "vpc_security_group_ids" {
-  description = "L'ID du Security Group par défaut pour le VPC"
-  value       = aws_security_group.vpc.id
+  description = "Les IDs du Security Group par défaut pour le VPC"
+  value       = [aws_security_group.vpc.id]
 }

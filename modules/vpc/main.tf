@@ -26,7 +26,7 @@ resource "aws_subnet" "public" {
   availability_zone = element(var.availability_zones, count.index)
 
   tags = {
-    Name = "PublicSubnet-${count.index + 1}"
+    Name = "MainPublicSubnet-${count.index + 1}"
   }
 }
 
@@ -38,7 +38,7 @@ resource "aws_subnet" "private" {
   availability_zone = element(var.availability_zones, count.index)
 
   tags = {
-    Name = "PrivateSubnet-${count.index + 1}"
+    Name = "MainPrivateSubnet-${count.index + 1}"
   }
 }
 
@@ -52,7 +52,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "PublicRouteTable"
+    Name = "MainPublicRouteTable"
   }
 }
 
@@ -63,36 +63,39 @@ resource "aws_route_table_association" "public_assoc" {
   route_table_id = aws_route_table.public.id
 }
 
-# Création de la NAT Gateway (dans le public subnet)
+# Création de 2 NAT Gateway (dans les publics subnet)
 resource "aws_nat_gateway" "nat" {
-  allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public[0].id
+  count         = length(var.public_subnets)
+  allocation_id = aws_eip.nat[count.index].id
+  subnet_id     = aws_subnet.public[count.index].id
 
   tags = {
-    Name = "MainNAT"
+    Name = "MainNATGateway-${count.index + 1}"
   }
 }
 
-# Création de l'IP Elastic pour la NAT Gateway
+# Création de l'IP Elastic pour les NAT Gateway
 resource "aws_eip" "nat" {
+  count  = length(var.public_subnets)
   domain = "vpc"
 
   tags = {
-    Name = "NATElasticIP"
+    Name = "MainNATElasticIP-${count.index + 1}"
   }
 }
 
 # Création de la table de routage pour les sous-réseaux privés
 resource "aws_route_table" "private" {
+  count = length(var.private_subnets)
   vpc_id = aws_vpc.main.id
 
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat.id
+    nat_gateway_id = aws_nat_gateway.nat[count.index].id
   }
 
   tags = {
-    Name = "PrivateRouteTable"
+    Name = "MainPrivateRouteTable-${count.index + 1}"
   }
 }
 
@@ -100,5 +103,5 @@ resource "aws_route_table" "private" {
 resource "aws_route_table_association" "private_assoc" {
   count          = length(var.private_subnets)
   subnet_id      = aws_subnet.private[count.index].id
-  route_table_id = aws_route_table.private.id
+  route_table_id = aws_route_table.private[count.index].id
 }

@@ -1,5 +1,35 @@
 # variables.tf
 
+/////////////
+# Définition des variables pour les clés SSH du Bastion Host
+variable "ec2_bastion_public_key_path" {
+  description = "Chemin pour enregistrer la clé publique"
+  type        = string
+}
+
+variable "ec2_bastion_private_key_path" {
+  description = "Chemin pour enregistrer la clé privée"
+  type        = string
+}
+
+variable "ec2_bastion_ingress_ip_1" {
+  description = "IP autorisée pour l'accès SSH au Bastion Host"
+  type        = string
+}
+
+variable "project" {
+  description = "KANGOUROUUUUUUUXX"
+  type        = string
+}
+
+# Définition des variables pour l'environnement et le projet
+variable "environment" {
+  description = "Environnement (e.g., dev, prod)"
+  type        = string
+}
+
+/////////////
+
 # variables.tf (Module racine)
 variable "create_read_replica" {
   description = "Créer une réplique en lecture (true/false)"
@@ -126,3 +156,4 @@ variable "vpc_security_group_name" {
   type        = string
   default     = "vpc_security_group"  # Vous pouvez définir un nom par défaut ici
 }
+
