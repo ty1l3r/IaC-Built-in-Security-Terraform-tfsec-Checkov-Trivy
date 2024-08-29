@@ -3,41 +3,43 @@
 ## Generate PEM (and OpenSSH) formatted private key.
 resource "tls_private_key" "ec2-bastion-host-key-pair" {
   algorithm = "RSA"
-  rsa_bits = 4096
+  rsa_bits  = 4096
 }
 
 ## Create the file for Public Key
 resource "local_file" "ec2-bastion-host-public-key" {
-  depends_on = [ tls_private_key.ec2-bastion-host-key-pair ]
-  content = tls_private_key.ec2-bastion-host-key-pair.public_key_openssh
-  filename = var.ec2-bastion-public-key-path
+  depends_on = [tls_private_key.ec2-bastion-host-key-pair]
+  content    = tls_private_key.ec2-bastion-host-key-pair.public_key_openssh
+  filename   = var.ec2_bastion_public_key_path  # Corrigé pour correspondre au nom de variable standard
 }
 
 ## Create the sensitive file for Private Key
 resource "local_sensitive_file" "ec2-bastion-host-private-key" {
   depends_on      = [tls_private_key.ec2-bastion-host-key-pair]
   content         = tls_private_key.ec2-bastion-host-key-pair.private_key_pem
-  filename        = var.ec2-bastion-private-key-path
+  filename        = var.ec2_bastion_private_key_path  # Utilisation de la bonne variable
   file_permission = "0600"
 }
 
 ## AWS SSH Key Pair
 resource "aws_key_pair" "ec2-bastion-host-key-pair" {
-  depends_on = [ local_file.ec2-bastion-host-public-key ]
-  key_name = "${var.project}-ec2-bastion-host-key-pair-${var.environment}"
-  public_key = tls_private_key.ec2-bastion-host-key-pair.public_key_openssh
+  key_name   = "${var.project}-bastion-key"  # Ajout du suffixe descriptif au nom de la clé
+  public_key = file(var.ec2_bastion_public_key_path)  # Utilisation correcte du chemin de la clé publique
 }
 
 # Bastion Host - Instance EC2 déployée dans un sous-réseau public
 resource "aws_instance" "bastion" {
-  ami           = data.aws_ami.latest_amazon_linux.id  # Utilise l'AMI récupérée dans ami.tf
-  instance_type = var.bastion_instance_type  # Type d'instance pour le Bastion Host
+  # Utilise l'AMI récupérée dans ami.tf
+  ami           = data.aws_ami.latest_amazon_linux.id
+  # Type d'instance pour le Bastion Host
+  instance_type = var.bastion_instance_type
+  # Le Security Group pour le Bastion Host
 
-  vpc_security_group_ids = [var.bastion_security_group_id]  # Le Security Group pour le Bastion Host
-  subnet_id              = var.public_subnet_id  # Le sous-réseau public où le Bastion sera déployé
-
-  associate_public_ip_address = true  # Associe une adresse IP publique pour permettre l'accès depuis Internet
-
+  # Le sous-réseau public où le Bastion sera déployé
+  subnet_id              = var.public_subnet_id
+  key_name               = "${aws_key_pair.key_name}"
+  # Associe une adresse IP publique pour permettre l'accès depuis Internet
+  associate_public_ip_address = true
   tags = {
     Name = "Bastion-Host"  # Un tag pour identifier cette instance comme le Bastion Host
   }

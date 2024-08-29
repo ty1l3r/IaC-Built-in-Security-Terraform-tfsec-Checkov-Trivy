@@ -36,11 +36,6 @@ variable "bastion_instance_type" {
   default     = "t2.micro"
 }
 
-# ID du Security Group pour le Bastion Host
-variable "bastion_security_group_id" {
-  description = "ID du Security Group pour le Bastion Host"
-  type        = string
-}
 
 # ID du sous-réseau public pour le Bastion Host
 variable "public_subnet_id" {
@@ -73,5 +68,10 @@ variable "web_security_group_id" {
 # ID du sous-réseau privé pour les instances WordPress
 variable "private_subnet_id" {
   description = "ID du Subnet Privé pour déployer les instances WordPress"
+  type        = string
+}
+
+variable "bastion_security_group_id" {
+  description = "ID du Security Group pour le Bastion Host"
   type        = string
 }

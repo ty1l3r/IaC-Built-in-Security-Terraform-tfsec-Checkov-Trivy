@@ -23,7 +23,7 @@ module "rds" {
 
 module "ec2" {
   source                   = "./modules/ec2"
-  bastion_security_group_id = var.bastion_security_group_id  # Utilise la variable pour le security group du bastion
+  bastion_security_group_id = var.bastion_security_group_id  # Utilisation de la variable renommée
   ec2_bastion_public_key_path    = var.ec2_bastion_public_key_path
   ec2_bastion_private_key_path   = var.ec2_bastion_private_key_path
   ec2_bastion_ingress_ip_1       = var.ec2_bastion_ingress_ip_1

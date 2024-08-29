@@ -55,3 +55,12 @@ sg-028fd783776630f54
 ||  GroupName   |  load_balancer_security_group           ||
 ||  OwnerId     |  126316686161                             ||
 ||  VpcId       |  vpc-0d28f2522df70c57f                  ||
+
+
+DESCRIBE SUBNETS :
+aws ec2 describe-subnets --query 'Subnets[*].{ID:SubnetId,VPC:VpcId,CIDR:CidrBlock}' --output table
+10.0.144.0/20|  subnet-045da5e92a3ac21eb  |  vpc-075d7129a250b342d  |
+|  10.0.128.0/20|  subnet-095b24eea5de7fbaa  |  vpc-075d7129a250b342d  |
+|  10.0.0.0/19  |  subnet-005190b170dfeb6c7  |  vpc-075d7129a250b342d  |
+|  10.0.32.0/19 |  subnet-0ef88521f1f017047  |  vpc-075d7129a250b342d
+
