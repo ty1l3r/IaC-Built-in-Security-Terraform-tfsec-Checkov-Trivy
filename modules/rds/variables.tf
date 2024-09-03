@@ -1,5 +1,10 @@
 # rds/variables.tf
 
+variable "vpc_id" {
+  description = "L'ID du VPC où les ressources RDS seront déployées"
+  type        = string
+}
+
 variable "db_instance_class" {
   description = "Type d'instance pour RDS"
   type        = string
@@ -30,7 +35,7 @@ variable "db_subnet_group" {
   default     = "my-db-subnet-group"
 }
 
-variable "vpc_security_group_ids" {
+variable "rds_security_group_id" {
   description = "Liste des IDs des groupes de sécurité associés à l'instance RDS"
   type        = list(string)
 }
@@ -50,9 +55,4 @@ variable "create_read_replica" {
   description = "Créer une réplique en lecture (true/false)"
   type        = bool
   default     = false
-}
-
-variable "vpc_id" {
-  description = "L'ID du VPC où les ressources RDS seront déployées"
-  type        = string
 }

@@ -1,107 +1,172 @@
 # modules/vpc/main.tf
 
 # Création du VPC
-resource "aws_vpc" "main" {
+resource "aws_vpc" "main_vpc" {
   cidr_block           = var.vpc_cidr
   enable_dns_support   = true
   enable_dns_hostnames = true
   tags = {
-    Name = "MainVPC"
+    Name        = "MainVPC"
+    Environment = var.environment
   }
 }
 
-# Création de la passerelle Internet (Internet Gateway)
+# Création d'Internet Gateway (connexion entrantes et sortantes)
 resource "aws_internet_gateway" "igw" {
-  vpc_id = aws_vpc.main.id
+  vpc_id = aws_vpc.main_vpc.id
   tags = {
-    Name = "MainIGW"
+    Name = "Main-IGW"
+  }
+  depends_on = [aws_vpc.main_vpc]
+}
+
+# ======= SUBNET PUBLIC A ==========================================================================
+# Création du sous-réseau public A pour les serveurs
+
+resource "aws_subnet" "public_subnet_a" {
+  vpc_id                  = aws_vpc.main_vpc.id
+  cidr_block              = var.cidr_public_subnet_a
+  map_public_ip_on_launch = true
+  availability_zone       = var.az_a
+  tags = {
+    Name        = "public-a"
+    Environment = var.environment
   }
 }
 
-# Création des sous-réseaux publics
-resource "aws_subnet" "public" {
-  count             = length(var.public_subnets)
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = element(var.public_subnets, count.index)
-  availability_zone = element(var.availability_zones, count.index)
+# Associer le sous-réseau public-a à la table de routage
+resource "aws_route_table_association" "rta_subnet_association_pub_a" {
+  subnet_id      = aws_subnet.public_subnet_a.id
+  route_table_id = aws_route_table.routage_public.id
+}
 
+# Créer une passerelle NAT pour le sous-réseau public A et une IP élastique
+# Création de l'IP Elastic pour les NAT Gateway
+resource "aws_eip" "eip_public_a" {
+  domain = "vpc"
+}
+
+resource "aws_nat_gateway" "gw_public_a" {
+  allocation_id = aws_eip.eip_public_a.id
+  subnet_id     = aws_subnet.public_subnet_a.id
   tags = {
-    Name = "MainPublicSubnet-${count.index + 1}"
+    Name = "nat-public-a"
   }
 }
 
-# Création des sous-réseaux privés
-resource "aws_subnet" "private" {
-  count             = length(var.private_subnets)
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = element(var.private_subnets, count.index)
-  availability_zone = element(var.availability_zones, count.index)
+# Créer une route vers la passerelle NAT
+resource "aws_route" "route_app_a_nat" {
+  route_table_id         = aws_route_table.rtb_app_a.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.gw_public_a.id
+}
 
+# Créer une table de routage pour le sous-réseau A
+resource "aws_route_table" "rtb_app_a" {
+  vpc_id = aws_vpc.main_vpc.id
   tags = {
-    Name = "MainPrivateSubnet-${count.index + 1}"
+    Name = "app-a-routetable"
   }
 }
 
+resource "aws_route_table_association" "rta_subnet_association_app_a" {
+  subnet_id      = aws_subnet.public_subnet_a.id
+  route_table_id = aws_route_table.rtb_app_a.id
+}
+
+# ======= SUBNET PUBLIC B ==========================================================================
+# Création du sous-réseau public B pour les serveurs
+
+resource "aws_subnet" "public_subnet_b" {
+  vpc_id                  = aws_vpc.main_vpc.id
+  cidr_block              = var.cidr_public_subnet_b
+  map_public_ip_on_launch = true
+  availability_zone       = var.az_b
+  tags = {
+    Name        = "public-b"
+    Environment = var.environment
+  }
+}
+
+# Associer le sous-réseau public-b à la table de routage
+resource "aws_route_table_association" "rta_subnet_association_pub_b" {
+  subnet_id      = aws_subnet.public_subnet_b.id
+  route_table_id = aws_route_table.routage_public.id
+}
+
+# Créer une passerelle NAT pour le sous-réseau public B et une IP élastique
+# Création de l'IP Elastic pour les NAT Gateway
+resource "aws_eip" "eip_public_b" {
+  domain = "vpc"
+}
+
+resource "aws_nat_gateway" "gw_public_b" {
+  allocation_id = aws_eip.eip_public_b.id
+  subnet_id     = aws_subnet.public_subnet_b.id
+  tags = {
+    Name = "nat-public-b"
+  }
+}
+
+# Créer une route vers la passerelle NAT
+resource "aws_route" "route_app_b_nat" {
+  route_table_id         = aws_route_table.rtb_app_b.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.gw_public_b.id
+}
+
+# Créer une table de routage pour le sous-réseau B
+resource "aws_route_table" "rtb_app_b" {
+  vpc_id = aws_vpc.main_vpc.id
+  tags = {
+    Name = "app-b-routetable"
+  }
+}
+
+resource "aws_route_table_association" "rta_subnet_association_app_b" {
+  subnet_id      = aws_subnet.public_subnet_b.id
+  route_table_id = aws_route_table.rtb_app_b.id
+}
+
+# ======= TABLE DE ROUTAGE PRINCIPALE POUR LES SOUS-RÉSEAUX PUBLICS ==========================
 # Création de la table de routage principale pour les sous-réseaux publics
-resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.main.id
+
+resource "aws_route_table" "routage_public" {
+  vpc_id = aws_vpc.main_vpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.igw.id
   }
-
   tags = {
     Name = "MainPublicRouteTable"
   }
 }
 
-# Association des sous-réseaux publics à la table de routage publique
-resource "aws_route_table_association" "public_assoc" {
-  count          = length(var.public_subnets)
-  subnet_id      = aws_subnet.public[count.index].id
-  route_table_id = aws_route_table.public.id
-}
+# ======= SUBNET PRIVÉ A ==========================================================================
+# Création du sous-réseau privé A
 
-# Création de 2 NAT Gateway (dans les publics subnet)
-resource "aws_nat_gateway" "nat" {
-  count         = length(var.public_subnets)
-  allocation_id = aws_eip.nat[count.index].id
-  subnet_id     = aws_subnet.public[count.index].id
-
+resource "aws_subnet" "private_subnet_a" {
+  vpc_id                  = aws_vpc.main_vpc.id
+  cidr_block              = var.cidr_private_subnet_a
+  map_public_ip_on_launch = false
+  availability_zone       = var.az_a
   tags = {
-    Name = "MainNATGateway-${count.index + 1}"
+    Name        = "private-subnet-a"
+    Environment = var.environment
   }
 }
 
-# Création de l'IP Elastic pour les NAT Gateway
-resource "aws_eip" "nat" {
-  count  = length(var.public_subnets)
-  domain = "vpc"
+# ======= SUBNET PRIVÉ B ==========================================================================
+# Création du sous-réseau privé B
 
+resource "aws_subnet" "private_subnet_b" {
+  vpc_id                  = aws_vpc.main_vpc.id
+  cidr_block              = var.cidr_private_subnet_b
+  map_public_ip_on_launch = false
+  availability_zone       = var.az_b
   tags = {
-    Name = "MainNATElasticIP-${count.index + 1}"
+    Name        = "private-subnet-b"
+    Environment = var.environment
   }
-}
-
-# Création de la table de routage pour les sous-réseaux privés
-resource "aws_route_table" "private" {
-  count = length(var.private_subnets)
-  vpc_id = aws_vpc.main.id
-
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat[count.index].id
-  }
-
-  tags = {
-    Name = "MainPrivateRouteTable-${count.index + 1}"
-  }
-}
-
-# Association des sous-réseaux privés à la table de routage privée
-resource "aws_route_table_association" "private_assoc" {
-  count          = length(var.private_subnets)
-  subnet_id      = aws_subnet.private[count.index].id
-  route_table_id = aws_route_table.private[count.index].id
 }

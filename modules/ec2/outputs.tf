@@ -1,5 +1,25 @@
 # modules/ec2/outputs.tf
 
+##################### USEFULL
+
+output "ec2_app_a_id" {
+  description = "ID de l'instance EC2 pour WordPress dans le sous-réseau privé A"
+  value       = aws_instance.ec2_app_a.id
+}
+
+output "ec2_app_b_id" {
+  description = "ID de l'instance EC2 pour WordPress dans le sous-réseau privé B"
+  value       = aws_instance.ec2_app_b.id
+}
+
+output "wp_security_group_id" {
+  description = "ID du Security Group pour les instances WordPress"
+  value       = var.wp_security_group_id
+}
+
+##################### Test
+
+/*
 # Output pour récupérer l'ID du Bastion Host
 output "bastion_instance_id" {
   description = "L'ID de l'instance Bastion"
@@ -29,11 +49,11 @@ output "instance_ids" {
   description = "List of IDs of the WordPress instances created in the private subnets"
 }
 output "bastion_security_group_id" {
-  description = "ID du Security Group pour le Bastion Host"
-  value       = var.bastion_security_group_id
+  description = "The ID of the security group for the Bastion host"
+  value       = aws_security_group.bastion_sg.id
 }
 
-output "web_security_group_id" {
-  description = "ID du Security Group pour les instances WordPress"
-  value       = var.web_security_group_id
-}
+*/
+
+
+

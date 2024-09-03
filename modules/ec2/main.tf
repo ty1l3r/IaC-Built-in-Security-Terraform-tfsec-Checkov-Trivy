@@ -1,85 +1,59 @@
 # modules/ec2/main.tf
 
-## Generate PEM (and OpenSSH) formatted private key.
-resource "tls_private_key" "ec2-bastion-host-key-pair" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
+## Création de la paire de clé du serveur Bastion
+resource "aws_key_pair" "myec2key" {
+  key_name   = "keypair"
+  public_key = "${file("~/.ssh/id_rsa.pub")}"
 }
 
-## Create the file for Public Key
-resource "local_file" "ec2-bastion-host-public-key" {
-  depends_on = [tls_private_key.ec2-bastion-host-key-pair]
-  content    = tls_private_key.ec2-bastion-host-key-pair.public_key_openssh
-  filename   = var.ec2_bastion_public_key_path  # Corrigé pour correspondre au nom de variable standard
-}
-
-## Create the sensitive file for Private Key
-resource "local_sensitive_file" "ec2-bastion-host-private-key" {
-  depends_on      = [tls_private_key.ec2-bastion-host-key-pair]
-  content         = tls_private_key.ec2-bastion-host-key-pair.private_key_pem
-  filename        = var.ec2_bastion_private_key_path  # Utilisation de la bonne variable
-  file_permission = "0600"
-}
-
-## AWS SSH Key Pair
-resource "aws_key_pair" "ec2-bastion-host-key-pair" {
-  key_name   = "${var.project}-bastion-key"  # Ajout du suffixe descriptif au nom de la clé
-  public_key = file(var.ec2_bastion_public_key_path)  # Utilisation correcte du chemin de la clé publique
-}
-
-# Bastion Host - Instance EC2 déployée dans un sous-réseau public
-resource "aws_instance" "bastion" {
-  # Utilise l'AMI récupérée dans ami.tf
-  ami           = data.aws_ami.latest_amazon_linux.id
-  # Type d'instance pour le Bastion Host
-  instance_type = var.bastion_instance_type
-  # Le Security Group pour le Bastion Host
-
-  # Le sous-réseau public où le Bastion sera déployé
-  subnet_id              = var.public_subnet_id
-  key_name               = "${aws_key_pair.key_name}"
-  # Associe une adresse IP publique pour permettre l'accès depuis Internet
-  associate_public_ip_address = true
+# Instance EC2 pour WordPress - Déployée dans un sous-réseau privé A
+resource "aws_instance" "ec2_app_a" {
+  ami = data.aws_ami.latest_amazon_linux.id
+  instance_type          = var.bastion_instance_type
+  subnet_id              = var.private_subnet_a_id
+  #wp_security_group_id = [aws_security_group.sg_private_wp.id]
+  key_name               = aws_key_pair.myec2key.key_name
+  user_data = "${file("wp.sh")}"
   tags = {
-    Name = "Bastion-Host"  # Un tag pour identifier cette instance comme le Bastion Host
+    Name        = "app_wp_a"
   }
 }
 
-# Instances EC2 pour WordPress - Déployées dans des sous-réseaux privés
-resource "aws_instance" "web_private" {
-  count         = var.web_instance_count  # Le nombre d'instances WordPress à créer
-  ami           = data.aws_ami.latest_amazon_linux.id  # Utilise l'AMI récupérée dans ami.tf
-  instance_type = var.web_instance_type  # Type d'instance pour les serveurs WordPress
-  vpc_security_group_ids = [var.web_security_group_id]  # Le Security Group pour ces instances
-  subnet_id              = var.private_subnet_id  # Le sous-réseau privé où les instances seront déployées
-  associate_public_ip_address = false  # Aucune adresse IP publique pour ces instances
-  user_data                   = file("wp.sh")
-
+# Instance EC2 pour WordPress - Déployée dans un sous-réseau privé b
+resource "aws_instance" "ec2_app_b" {
+  ami = data.aws_ami.latest_amazon_linux.id
+  instance_type          = var.bastion_instance_type
+  subnet_id              = var.private_subnet_b_id
+  #wp_security_group_id = [aws_security_group.sg_private_wp.id]
+  key_name               = aws_key_pair.myec2key.key_name
+  user_data = "${file("wp.sh")}"
   tags = {
-    Name = "WordPress-Private-EC2-${count.index + 1}"  # Un tag pour identifier chaque instance
+    Name        = "app_wp_b"
   }
 }
 
-# Configuration d'un groupe d'autoscaling pour les instances WordPress
+## AUTOSCALLING #############################################################
+
+# Auto Scaling Group pour gérer les instances WordPress
 resource "aws_autoscaling_group" "web_asg" {
-  desired_capacity     = var.web_instance_count  # Capacité désirée (le nombre d'instances à maintenir)
-  max_size             = 2  # Taille maximale du groupe d'autoscaling
-  min_size             = 1  # Taille minimale du groupe d'autoscaling
-  vpc_zone_identifier  = [var.private_subnet_id]  # Sous-réseaux privés où les instances seront déployées
-  launch_configuration = aws_launch_configuration.web_lc.id  # Configuration de lancement pour l'autoscaling
+  launch_configuration = aws_launch_configuration.web_lc.id  # Correction ici
+  min_size             = 1
+  max_size             = 2
+  desired_capacity     = 1  # Vous pouvez ajuster ce nombre selon vos besoins initiaux
+  vpc_zone_identifier  = [var.private_subnet_a_id, var.private_subnet_b_id]  # Utiliser les deux sous-réseaux privés
 
   tag {
     key                 = "Name"
-    value               = "WordPress-Private-EC2-ASG"  # Tag pour les instances créées par l'ASG
-    propagate_at_launch = true  # Applique ce tag à chaque instance lors de son lancement
+    value               = "WordPress-Private-EC2-ASG"
+    propagate_at_launch = true
   }
 }
 
-# Configuration de lancement utilisée par le groupe d'autoscaling = Auto Scaling Group, ASG
+# Configuration de lancement utilisée par le groupe d'autoscaling (ASG)
 resource "aws_launch_configuration" "web_lc" {
   image_id        = data.aws_ami.latest_amazon_linux.id  # Utilise l'AMI récupérée dans ami.tf
   instance_type   = var.web_instance_type  # Type d'instance pour les serveurs WordPress
-  security_groups = [var.web_security_group_id]  # Le Security Group pour ces instances
+  security_groups = [var.wp_security_group_id]  # Le Security Group pour ces instances
 
   lifecycle {
     create_before_destroy = true  # Assure que la nouvelle configuration est créée avant que l'ancienne ne soit détruite

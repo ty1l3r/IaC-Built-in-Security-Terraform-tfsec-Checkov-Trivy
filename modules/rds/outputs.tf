@@ -2,13 +2,13 @@
 
 # Output de l'ID du groupe de sous-réseaux RDS
 output "db_subnet_group" {
-  value       = aws_db_subnet_group.default.name
+  value       = aws_db_subnet_group.db_subnet_group
   description = "Nom du groupe de sous-réseaux pour l'instance RDS"
 }
 
 # Output des IDs des groupes de sécurité associés à l'instance RDS
-output "vpc_security_group_ids" {
-  value       = var.vpc_security_group_ids
+output "rds_security_group_id" {
+  value       = var.rds_security_group_id
   description = "Liste des IDs des groupes de sécurité associés à l'instance RDS"
 }
 
@@ -24,7 +24,6 @@ output "rds_instance_endpoint" {
   description = "Endpoint de l'instance RDS principale"
 }
 
-# Output de la réplique en lecture si elle est créée
 output "rds_read_replica_endpoint" {
   value       = var.create_read_replica ? aws_db_instance.read_replica[0].endpoint : null
   description = "Endpoint de la réplique en lecture, si créée"

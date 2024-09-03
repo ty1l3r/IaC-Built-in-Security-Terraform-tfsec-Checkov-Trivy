@@ -1,5 +1,81 @@
 # variables.tf
 
+/*variable "region" {
+  description = "AWS Region"
+  type        = string
+  default     = "eu-west-3"
+}*/
+# ID du Security Group pour les instances WordPress
+
+variable "subnet_ids" {
+  description = "Liste des IDs des sous-réseaux où le RDS sera déployé"
+  type        = list(string)
+}
+
+variable "wp_security_group_id" {
+  description = "ID du Security Group pour les instances WordPress"
+  type        = string
+}
+
+variable "rds_security_group_id" {
+  description = "Liste des IDs des groupes de sécurité associés à l'instance RDS"
+  type        = list(string)
+}
+
+variable "certificate_arn" {
+  description = "ARN du certificat SSL à utiliser pour HTTPS"
+  type        = string
+}
+
+variable "enable_https" {
+  description = "Indique si HTTPS est activé pour l'ALB"
+  type        = bool
+}
+
+variable "alb_name" {
+  description = "Nom de l'Application Load Balancer"
+  type        = string
+}
+
+variable "target_group_name" {
+  description = "Nom du groupe cible"
+  type        = string
+}
+
+variable "az_a" {
+  description = "zone de disponibilité a"
+  default     = "eu-west-3a"
+}
+
+variable "az_b" {
+  description = "zone de disponibilité a"
+  default     = "eu-west-3b"
+}
+
+variable "cidr_public_subnet_a" {
+  description = "CIDR du sous reseaux public a"
+  type = string
+  default = "10.0.128.0/20"
+}
+
+variable "cidr_public_subnet_b" {
+  description = "CIDR du sous reseaux public a"
+  type = string
+  default = "10.0.144.0/20"
+}
+
+variable "cidr_private_subnet_a" {
+  description = "CIDR du sous reseaux private a"
+  type = string
+  default = "10.0.0.0/19"
+}
+
+variable "cidr_private_subnet_b" {
+  description = "CIDR du sous reseaux private b"
+  type = string
+  default = "10.0.32.0/19"
+}
+
 /////////////
 # Définition des variables pour les clés SSH du Bastion Host
 variable "ec2_bastion_public_key_path" {
@@ -105,17 +181,13 @@ variable "db_instance_class" {
   default     = "db.t3.micro"  # Vous pouvez ajuster cette valeur selon vos besoins
 }
 
-variable "region" {
-  description = "AWS Region"
-  type        = string
-  default     = "eu-west-3"
-}
-
 variable "vpc_cidr" {
   description = "CIDR block for the VPC"
   type        = string
   default     = "10.0.0.0/16"
 }
+
+
 
 variable "public_subnets" {
   description = "List of public subnet CIDRs"

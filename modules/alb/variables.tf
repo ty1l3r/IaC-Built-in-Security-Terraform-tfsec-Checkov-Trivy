@@ -1,13 +1,20 @@
 # alb/variables.tf
 
+############################# utilisés sûr
+
 variable "vpc_id" {
   description = "L'ID du VPC où le ALB sera déployé"
   type        = string
 }
 
-variable "public_subnets" {
-  description = "Liste des IDs des sous-réseaux publics où le ALB sera déployé"
-  type        = list(string)
+variable "public_subnet_a_id" {
+  description = "L'ID du sous-réseau public A"
+  type        = string
+}
+
+variable "public_subnet_b_id" {
+  description = "L'ID du sous-réseau public B"
+  type        = string
 }
 
 variable "alb_name" {
@@ -19,12 +26,7 @@ variable "alb_name" {
 variable "target_group_name" {
   description = "Nom du groupe cible"
   type        = string
-  default     = "my-target-group"
-}
-
-variable "instance_ids" {
-  description = "Liste des IDs des instances EC2 à enregistrer dans le groupe cible"
-  type        = list(string)
+  default     = "alb-target-group"
 }
 
 variable "enable_https" {
@@ -38,3 +40,27 @@ variable "certificate_arn" {
   type        = string
   default     = ""
 }
+
+variable "ec2_app_a_id" {
+  description = "ID de l'instance EC2 pour l'application A"
+  type        = string
+}
+
+variable "ec2_app_b_id" {
+  description = "ID de l'instance EC2 pour l'application A"
+  type        = string
+}
+
+############################# a voir
+
+/*
+
+
+variable "instance_ids" {
+  description = "Liste des IDs des instances EC2 à enregistrer dans le groupe cible"
+  type        = list(string)
+}
+*/
+
+
+

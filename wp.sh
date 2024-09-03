@@ -2,7 +2,7 @@
 
 # variables
 DB_NAME="wordpress_db"            # Name of the database
-DB_USER="datascientest-student"       # Database username
+DB_USER="fab"       # Database username
 DB_PASSWORD="Datascientest@2024"      # Database password
 
 WORDPRESS_DIR="/var/www/html"     # wordpress code directory
