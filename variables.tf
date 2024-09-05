@@ -16,9 +16,9 @@ variable "bastion_id" {
 }
 
 variable "certificate_arn" {
-  description = "ARN du certificat SSL à utiliser pour HTTPS"
   type        = string
-  default     = null
+  description = "ARN du certificat SSL pour HTTPS"
+  default     = null  # Définit par défaut à null si aucun certificat n'est fourni
 }
 
 variable "alb_name" {
@@ -239,3 +239,8 @@ variable "vpc_security_group_name" {
   default     = "vpc_security_group"  # Vous pouvez définir un nom par défaut ici
 }
 
+variable "vpc_id" {
+  description = "Id du VPC par défaut"
+  type        = string
+  default     = "vpc-075d7129a250b342d"
+}

@@ -11,7 +11,7 @@ module "bastion" {
   public_subnet_a_id    = module.vpc.public_subnet_a_id
   public_subnet_b_id    = module.vpc.public_subnet_b_id
   vpc_security_group_ids = [module.bastion.bastion_sg_id]
-  certificate_arn       = module.alb.certificate_arn
+  certificate_arn       = var.certificate_arn
   key_name              = module.alb.myec2key_name
   subnet_id             = [module.vpc.public_subnet_a_id, module.vpc.public_subnet_b_id]
 }
@@ -69,5 +69,6 @@ module "alb" {
   certificate_arn     = var.enable_https ? var.certificate_arn : null  # Passe null si HTTPS n'est pas activé
   ec2_app_a_id        = module.ec2.ec2_app_a_id
   ec2_app_b_id        = module.ec2.ec2_app_b_id
+
 }
 

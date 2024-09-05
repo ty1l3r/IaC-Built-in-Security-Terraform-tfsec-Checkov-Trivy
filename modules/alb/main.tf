@@ -1,9 +1,7 @@
-## Création de la paire de clé du serveur  Bastion
-## Solution du cours déprecié.ls -l ~/.ssh/id_rsa.pub
-
 resource "aws_key_pair" "myec2key" {
-  key_name   = "keypair"
-  public_key = file("~/.ssh/id_rsa.pub")
+  key_name   = "keypair-wp"
+  count = var.create_key_pair ? 1 : 0
+  public_key = file("/home/ubuntu/project/id_rsa.pub")
 }
 
 resource "aws_lb" "lb_app" {
@@ -11,7 +9,10 @@ resource "aws_lb" "lb_app" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]
-  subnets            = [var.public_subnet_a_id, var.public_subnet_b_id]
+  subnets            = [
+    var.public_subnet_a_id,
+    var.public_subnet_b_id
+  ]
   enable_deletion_protection = false
 
   tags = {
@@ -46,20 +47,11 @@ resource "aws_lb_listener" "https" {
   port              = 443
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = var.certificate_arn != null ? var.certificate_arn : aws_acm_certificate.certificat.arn # Utilise la variable ou un certificat par défaut
+  certificate_arn   = var.certificate_arn
 
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.app_vms.arn
-  }
-}
-
-resource "aws_acm_certificate" "certificat" {
-  domain_name       = "yourdomain.com"
-  validation_method = "DNS"
-
-  tags = {
-    Name = "cert"
   }
 }
 

@@ -2,7 +2,11 @@
 
 ######### USED
 
-# Output pour l'ID du VPC ( créé par "igw")
+/*# Output pour l'ID du VPC ( créé par "igw")
+output "vpc_id" {
+  description = "L'ID du VPC"
+  value       = var.vpc_id
+}*/
 output "vpc_id" {
   description = "L'ID du VPC"
   value       = aws_vpc.main_vpc.id

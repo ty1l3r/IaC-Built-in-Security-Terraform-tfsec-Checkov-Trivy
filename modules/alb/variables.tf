@@ -31,9 +31,9 @@ variable "enable_https" {
 }
 
 variable "certificate_arn" {
-  description = "ARN du certificat SSL à utiliser pour HTTPS"
   type        = string
-  default     = null  # Par défaut, pas de certificat externe
+  description = "ARN du certificat SSL pour HTTPS"
+  default     = null  # Définit par défaut à null si aucun certificat n'est fourni
 }
 
 variable "ec2_app_a_id" {
@@ -46,16 +46,7 @@ variable "ec2_app_b_id" {
   type        = string
 }
 
-############################# a voir
-
-/*
-
-
-variable "instance_ids" {
-  description = "Liste des IDs des instances EC2 à enregistrer dans le groupe cible"
-  type        = list(string)
+variable "create_key_pair" {
+  description = "Indique si la Key Pair doit être créée"
+  default     = false
 }
-*/
-
-
-

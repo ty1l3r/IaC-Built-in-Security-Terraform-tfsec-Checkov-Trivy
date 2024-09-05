@@ -1,7 +1,7 @@
 {
   "version": 4,
   "terraform_version": "1.9.5",
-  "serial": 184,
+  "serial": 175,
   "lineage": "b0d9f044-289a-0401-5e59-95173f48e2d0",
   "outputs": {},
   "resources": [
@@ -1616,18 +1616,19 @@
       "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
       "instances": [
         {
+          "status": "tainted",
           "schema_version": 2,
           "attributes": {
-            "address": "terraform-20240905114155584300000001.cldawjkt00fr.eu-west-3.rds.amazonaws.com",
+            "address": "terraform-20240905112915957900000002.cldawjkt00fr.eu-west-3.rds.amazonaws.com",
             "allocated_storage": 5,
             "allow_major_version_upgrade": null,
             "apply_immediately": false,
-            "arn": "arn:aws:rds:eu-west-3:126316686161:db:terraform-20240905114155584300000001",
+            "arn": "arn:aws:rds:eu-west-3:126316686161:db:terraform-20240905112915957900000002",
             "auto_minor_version_upgrade": true,
             "availability_zone": "eu-west-3a",
             "backup_retention_period": 1,
             "backup_target": "region",
-            "backup_window": "08:42-09:12",
+            "backup_window": "11:53-12:23",
             "blue_green_update": [],
             "ca_cert_identifier": "rds-ca-rsa2048-g1",
             "character_set_name": "",
@@ -1646,7 +1647,7 @@
             "domain_iam_role_name": "",
             "domain_ou": "",
             "enabled_cloudwatch_logs_exports": [],
-            "endpoint": "terraform-20240905114155584300000001.cldawjkt00fr.eu-west-3.rds.amazonaws.com:3306",
+            "endpoint": "terraform-20240905112915957900000002.cldawjkt00fr.eu-west-3.rds.amazonaws.com:3306",
             "engine": "mysql",
             "engine_lifecycle_support": "open-source-rds-extended-support",
             "engine_version": "8.0",
@@ -1654,23 +1655,23 @@
             "final_snapshot_identifier": null,
             "hosted_zone_id": "ZMESEXB7ZGGQ3",
             "iam_database_authentication_enabled": false,
-            "id": "db-EJADEQCEVCJKTUIW77EUEEGN6M",
-            "identifier": "terraform-20240905114155584300000001",
+            "id": "db-PREZGNBI2A2G7EAU6MKC7IO6F4",
+            "identifier": "terraform-20240905112915957900000002",
             "identifier_prefix": "terraform-",
             "instance_class": "db.t3.micro",
             "iops": 0,
             "kms_key_id": "",
-            "latest_restorable_time": "2024-09-05T12:10:00Z",
+            "latest_restorable_time": "",
             "license_model": "general-public-license",
             "listener_endpoint": [],
-            "maintenance_window": "wed:06:53-wed:07:23",
+            "maintenance_window": "sun:05:01-sun:05:31",
             "manage_master_user_password": null,
             "master_user_secret": [],
             "master_user_secret_kms_key_id": null,
             "max_allocated_storage": 0,
             "monitoring_interval": 0,
             "monitoring_role_arn": "",
-            "multi_az": true,
+            "multi_az": false,
             "nchar_character_set_name": "",
             "network_type": "IPV4",
             "option_group_name": "default:mysql-8-0",
@@ -1684,12 +1685,12 @@
             "replica_mode": "",
             "replicas": [],
             "replicate_source_db": "",
-            "resource_id": "db-EJADEQCEVCJKTUIW77EUEEGN6M",
+            "resource_id": "db-PREZGNBI2A2G7EAU6MKC7IO6F4",
             "restore_to_point_in_time": [],
             "s3_import": [],
             "skip_final_snapshot": true,
             "snapshot_identifier": null,
-            "status": "available",
+            "status": "modifying",
             "storage_encrypted": false,
             "storage_throughput": 0,
             "storage_type": "gp2",
@@ -2488,6 +2489,49 @@
           "dependencies": [
             "module.vpc.aws_vpc.main_vpc"
           ]
+        }
+      ]
+    },
+    {
+      "module": "module.vpc",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "main",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:eu-west-3:126316686161:vpc/vpc-075d7129a250b342d",
+            "assign_generated_ipv6_cidr_block": false,
+            "cidr_block": "10.0.0.0/16",
+            "default_network_acl_id": "acl-0ad22d7f6851ae98c",
+            "default_route_table_id": "rtb-09f9ea0161dbfd065",
+            "default_security_group_id": "sg-0c19590fbe32cf708",
+            "dhcp_options_id": "dopt-01f3a5d2b79d4f7d4",
+            "enable_dns_hostnames": true,
+            "enable_dns_support": true,
+            "enable_network_address_usage_metrics": false,
+            "id": "vpc-075d7129a250b342d",
+            "instance_tenancy": "default",
+            "ipv4_ipam_pool_id": null,
+            "ipv4_netmask_length": null,
+            "ipv6_association_id": "",
+            "ipv6_cidr_block": "",
+            "ipv6_cidr_block_network_border_group": "",
+            "ipv6_ipam_pool_id": "",
+            "ipv6_netmask_length": 0,
+            "main_route_table_id": "rtb-09f9ea0161dbfd065",
+            "owner_id": "126316686161",
+            "tags": {
+              "Name": "MainVPC"
+            },
+            "tags_all": {
+              "Name": "MainVPC"
+            }
+          },
+          "sensitive_attributes": [],
+          "private": "eyJzY2hlbWFfdmVyc2lvbiI6IjEifQ=="
         }
       ]
     },

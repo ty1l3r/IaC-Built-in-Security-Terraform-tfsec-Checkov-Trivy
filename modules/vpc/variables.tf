@@ -1,5 +1,7 @@
 # modules/vpc/variables.tf
 
+
+
 variable "environment" {
   description = "Environment for the VPC (e.g., dev, prod)"
   type        = string

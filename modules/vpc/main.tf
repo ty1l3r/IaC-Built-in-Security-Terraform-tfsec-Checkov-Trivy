@@ -1,6 +1,7 @@
 # modules/vpc/main.tf
 
 # Création du VPC
+
 resource "aws_vpc" "main_vpc" {
   cidr_block           = var.vpc_cidr
   enable_dns_support   = true
@@ -8,6 +9,9 @@ resource "aws_vpc" "main_vpc" {
   tags = {
     Name        = "MainVPC"
     Environment = var.environment
+  }
+  lifecycle {
+    prevent_destroy = true  # Empêche la destruction du VPC
   }
 }
 
@@ -33,16 +37,26 @@ resource "aws_subnet" "public_subnet_a" {
     Environment = var.environment
   }
 }
+resource "aws_route_table" "public_route_a" {
+  vpc_id = aws_vpc.main_vpc.id
+}
+
+resource "aws_route_table" "public_route_b" {
+  vpc_id = aws_vpc.main_vpc.id
+}
 
 # Associer le sous-réseau public-a à la table de routage
 resource "aws_route_table_association" "rta_subnet_association_pub_a" {
   subnet_id      = aws_subnet.public_subnet_a.id
-  route_table_id = aws_route_table.routage_public.id
+  route_table_id = aws_route_table.public_route_a.id
 }
+
 
 # Créer une passerelle NAT pour le sous-réseau public A et une IP élastique
 # Création de l'IP Elastic pour les NAT Gateway
 resource "aws_eip" "eip_public_a" {
+  # S'assurer que le NAT Gateway est supprimé d'abord
+  #depends_on = [aws_nat_gateway.gw_public_a]
   domain = "vpc"
 }
 
@@ -69,10 +83,7 @@ resource "aws_route_table" "rtb_app_a" {
   }
 }
 
-resource "aws_route_table_association" "rta_subnet_association_app_a" {
-  subnet_id      = aws_subnet.public_subnet_a.id
-  route_table_id = aws_route_table.rtb_app_a.id
-}
+
 
 # ======= SUBNET PUBLIC B ==========================================================================
 # Création du sous-réseau public B pour les serveurs
@@ -91,8 +102,10 @@ resource "aws_subnet" "public_subnet_b" {
 # Associer le sous-réseau public-b à la table de routage
 resource "aws_route_table_association" "rta_subnet_association_pub_b" {
   subnet_id      = aws_subnet.public_subnet_b.id
-  route_table_id = aws_route_table.routage_public.id
+  route_table_id = aws_route_table.public_route_b.id
 }
+
+
 
 # Créer une passerelle NAT pour le sous-réseau public B et une IP élastique
 # Création de l'IP Elastic pour les NAT Gateway
@@ -123,10 +136,6 @@ resource "aws_route_table" "rtb_app_b" {
   }
 }
 
-resource "aws_route_table_association" "rta_subnet_association_app_b" {
-  subnet_id      = aws_subnet.public_subnet_b.id
-  route_table_id = aws_route_table.rtb_app_b.id
-}
 
 # ======= TABLE DE ROUTAGE PRINCIPALE POUR LES SOUS-RÉSEAUX PUBLICS ==========================
 # Création de la table de routage principale pour les sous-réseaux publics

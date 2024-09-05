@@ -11,13 +11,12 @@ ec2_bastion_private_key_path = "${path.root}/secrets/ec2-bastion-key-pair.pem"
 ec2_bastion_ingress_ip_1     = "0.0.0.0/0"
 */
 
-
-
 # Valeurs pour les variables de l'environnement et du projet
 environment = "dev"
 project     = "KANGOUROUXXXXZZZ"
 
 db_name = "wordpressdb"
 db_username = "admin"
-db_password = "admin"
+db_password = "adminadmin"
 
+vpc_id     = "vpc-075d7129a250b342d"  # ID du VPC existant
