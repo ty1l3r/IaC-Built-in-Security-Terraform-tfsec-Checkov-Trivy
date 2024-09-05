@@ -1,46 +1,44 @@
 # variables.tf
 
-/*variable "region" {
-  description = "AWS Region"
-  type        = string
-  default     = "eu-west-3"
-}*/
-# ID du Security Group pour les instances WordPress
+##### USE
 
-variable "subnet_ids" {
-  description = "Liste des IDs des sous-réseaux où le RDS sera déployé"
-  type        = list(string)
+variable "enable_https" {
+  description = "Activer HTTPS pour le ALB"
+  type        = bool
+  default     = false
 }
 
-variable "wp_security_group_id" {
-  description = "ID du Security Group pour les instances WordPress"
+# Variable pour l'ID du Bastion
+variable "bastion_id" {
+  description = "L'ID du Bastion"
   type        = string
-}
-
-variable "rds_security_group_id" {
-  description = "Liste des IDs des groupes de sécurité associés à l'instance RDS"
-  type        = list(string)
+  default = ""
 }
 
 variable "certificate_arn" {
   description = "ARN du certificat SSL à utiliser pour HTTPS"
   type        = string
-}
-
-variable "enable_https" {
-  description = "Indique si HTTPS est activé pour l'ALB"
-  type        = bool
+  default     = null
 }
 
 variable "alb_name" {
   description = "Nom de l'Application Load Balancer"
   type        = string
+  default     = "my-alb"
 }
 
-variable "target_group_name" {
-  description = "Nom du groupe cible"
-  type        = string
-}
+
+
+
+###### TO SEE
+
+
+
+
+
+
+
+
 
 variable "az_a" {
   description = "zone de disponibilité a"
@@ -74,23 +72,6 @@ variable "cidr_private_subnet_b" {
   description = "CIDR du sous reseaux private b"
   type = string
   default = "10.0.32.0/19"
-}
-
-/////////////
-# Définition des variables pour les clés SSH du Bastion Host
-variable "ec2_bastion_public_key_path" {
-  description = "Chemin pour enregistrer la clé publique"
-  type        = string
-}
-
-variable "ec2_bastion_private_key_path" {
-  description = "Chemin pour enregistrer la clé privée"
-  type        = string
-}
-
-variable "ec2_bastion_ingress_ip_1" {
-  description = "IP autorisée pour l'accès SSH au Bastion Host"
-  type        = string
 }
 
 variable "project" {
@@ -135,9 +116,22 @@ variable "web_instance_count" {
   default     = 2
 }
 
-# ID du Security Group pour le Bastion Host
-variable "bastion_security_group_id" {
-  description = "ID du Security Group pour le Bastion Host"
+
+
+
+/*# ID du sous-réseau public pour le Bastion Host
+variable "public_subnet_id" {
+  description = "ID du Subnet Public pour déployer le Bastion Host"
+  type        = string
+}
+
+variable "target_group_name" {
+  description = "Nom du groupe cible"
+  type        = string
+}
+
+variable "wp_security_group_id" {
+  description = "ID du Security Group pour les instances WordPress"
   type        = string
 }
 
@@ -147,9 +141,19 @@ variable "web_security_group_id" {
   type        = string
 }
 
-# ID du sous-réseau public pour le Bastion Host
-variable "public_subnet_id" {
-  description = "ID du Subnet Public pour déployer le Bastion Host"
+variable "subnet_ids" {
+  description = "Liste des IDs des sous-réseaux où le RDS sera déployé"
+  type        = list(string)
+}
+
+variable "rds_security_group_id" {
+  description = "Liste des IDs des groupes de sécurité associés à l'instance RDS"
+  type        = list(string)
+}
+
+# Variable pour l'ID du sous-réseau public B
+variable "public_subnet_b_id" {
+  description = "L'ID du sous-réseau public B"
   type        = string
 }
 
@@ -158,6 +162,23 @@ variable "private_subnet_id" {
   description = "ID du Subnet Privé pour déployer les instances WordPress"
   type        = string
 }
+variable "private_subnets" {
+  description = "List of private subnet CIDRs"
+  type        = list(string)
+}
+
+# Variable pour l'ID du sous-réseau public A
+variable "public_subnet_a_id" {
+  description = "L'ID du sous-réseau public A"
+  type        = string
+}
+
+variable "public_subnets" {
+  description = "List of public subnet CIDRs"
+  type        = list(string)
+}
+
+*/
 
 # Zones de disponibilité (AZs) dans lesquelles déployer les sous-réseaux
 variable "availability_zones" {
@@ -187,17 +208,6 @@ variable "vpc_cidr" {
   default     = "10.0.0.0/16"
 }
 
-
-
-variable "public_subnets" {
-  description = "List of public subnet CIDRs"
-  type        = list(string)
-}
-
-variable "private_subnets" {
-  description = "List of private subnet CIDRs"
-  type        = list(string)
-}
 
 variable "db_name" {
   description = "Name of the RDS database"

@@ -16,3 +16,8 @@ ec2_bastion_ingress_ip_1     = "0.0.0.0/0"
 # Valeurs pour les variables de l'environnement et du projet
 environment = "dev"
 project     = "KANGOUROUXXXXZZZ"
+
+db_name = "wordpressdb"
+db_username = "admin"
+db_password = "admin"
+

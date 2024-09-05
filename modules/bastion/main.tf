@@ -1,29 +1,24 @@
-## Création de la paire de clé du serveur  Bastion
 
-resource "aws_key_pair" "myec2key" {
-  key_name   = "keypair"
-  public_key = "${file("~/.ssh/id_rsa.pub")}"
-}
 
 ## BASTION ######################################################
 
 resource "aws_instance" "bastion" {
-  ami                    = data.aws_ami.latest_amazon_linux
+  count                  = 2  # Créer deux instances
+  ami                    = data.aws_ami.latest_amazon_linux.id
   instance_type          = "t2.micro"
-  subnet_id              = var.public_subnet_a_id
-  vpc_security_group_ids = [aws_security_group.sg_bastion]
-  key_name               = aws_key_pair.myec2key.key_name
-    tags = {
-      Name        = "bastion"
-    }
+  subnet_id              = element(var.subnet_id, count.index)  # Utilise la variable passée depuis le module root
+  vpc_security_group_ids = [aws_security_group.sg_bastion.id]
+  key_name               = var.key_name
+  tags = {
+    Name = "bastion-${count.index}"  # Un nom unique pour chaque instance
   }
+}
 
 ## NACL ######################################################
-
 # Créer un NACL pour accéder à l'hôte bastion via le port 22 PORT A
 resource "aws_network_acl" "public_a" {
   vpc_id = var.vpc_id
-  subnet_ids = [aws_subnet.public_subnet_a.id]
+  subnet_ids = [var.public_subnet_a_id]
   tags = {
     Name        = "nacl-public-a"
   }
@@ -32,7 +27,7 @@ resource "aws_network_acl" "public_a" {
 # Créer un NACL pour accéder à l'hôte bastion via le port 22 PORT B
 resource "aws_network_acl" "public_b" {
   vpc_id = var.vpc_id
-  subnet_ids = [aws_subnet.public_subnet_b.id]
+  subnet_ids = [var.public_subnet_b_id]
   tags = {
     Name        = "nacl-public-b"
   }

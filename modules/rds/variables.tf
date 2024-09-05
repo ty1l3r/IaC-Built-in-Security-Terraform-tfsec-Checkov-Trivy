@@ -56,3 +56,28 @@ variable "create_read_replica" {
   type        = bool
   default     = false
 }
+
+variable "private_subnet_a_id" {
+  description = "ID du sous-réseau privé A"
+  type        = string
+}
+
+variable "private_subnet_b_id" {
+  description = "ID du sous-réseau privé B"
+  type        = string
+}
+
+
+
+/*
+variable "private_subnet_a" {
+  description = "CIDR du sous reseaux public a"
+  type = string
+  default = "10.0.0.0/19"
+}
+
+variable "private_subnet_b" {
+  description = "CIDR du sous reseaux private a"
+  type = string
+  default = "10.0.32.0/19"
+}*/

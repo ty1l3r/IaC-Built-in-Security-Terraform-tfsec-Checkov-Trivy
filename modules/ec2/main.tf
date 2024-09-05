@@ -53,7 +53,7 @@ resource "aws_autoscaling_group" "web_asg" {
 resource "aws_launch_configuration" "web_lc" {
   image_id        = data.aws_ami.latest_amazon_linux.id  # Utilise l'AMI récupérée dans ami.tf
   instance_type   = var.web_instance_type  # Type d'instance pour les serveurs WordPress
-  security_groups = [var.wp_security_group_id]  # Le Security Group pour ces instances
+  security_groups = [aws_security_group.sg_private_wp.id]  # Le Security Group pour ces instances
 
   lifecycle {
     create_before_destroy = true  # Assure que la nouvelle configuration est créée avant que l'ancienne ne soit détruite

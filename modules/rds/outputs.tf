@@ -8,7 +8,7 @@ output "db_subnet_group" {
 
 # Output des IDs des groupes de sécurité associés à l'instance RDS
 output "rds_security_group_id" {
-  value       = var.rds_security_group_id
+  value       = aws_security_group.rds.id
   description = "Liste des IDs des groupes de sécurité associés à l'instance RDS"
 }
 
@@ -37,7 +37,7 @@ output "vpc_id" {
 
 # Output des IDs des sous-réseaux utilisés par RDS
 output "subnet_ids" {
-  value       = var.subnet_ids
+  value       = aws_db_subnet_group.db_subnet_group.id
   description = "Liste des IDs des sous-réseaux où le RDS est déployé"
 }
 

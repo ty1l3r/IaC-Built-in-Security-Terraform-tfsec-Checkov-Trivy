@@ -8,15 +8,13 @@ output "vpc_id" {
   value       = aws_vpc.main_vpc.id
 }
 
-# Output pour l'ID du sous-réseau privé A
 output "private_subnet_a_id" {
-  description = "L'ID du sous-réseau privé A"
+  description = "ID du sous-réseau privé A"
   value       = aws_subnet.private_subnet_a.id
 }
 
-# Output pour l'ID du sous-réseau privé B
 output "private_subnet_b_id" {
-  description = "L'ID du sous-réseau privé B"
+  description = "ID du sous-réseau privé B"
   value       = aws_subnet.private_subnet_b.id
 }
 

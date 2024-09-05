@@ -23,11 +23,6 @@ variable "alb_name" {
   default     = "my-alb"
 }
 
-variable "target_group_name" {
-  description = "Nom du groupe cible"
-  type        = string
-  default     = "alb-target-group"
-}
 
 variable "enable_https" {
   description = "Activer HTTPS pour le ALB"
@@ -38,7 +33,7 @@ variable "enable_https" {
 variable "certificate_arn" {
   description = "ARN du certificat SSL à utiliser pour HTTPS"
   type        = string
-  default     = ""
+  default     = null  # Par défaut, pas de certificat externe
 }
 
 variable "ec2_app_a_id" {

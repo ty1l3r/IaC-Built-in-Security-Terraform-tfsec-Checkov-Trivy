@@ -1,6 +1,5 @@
 # modules/vpc/variables.tf
 
-
 variable "environment" {
   description = "Environment for the VPC (e.g., dev, prod)"
   type        = string
@@ -54,4 +53,12 @@ variable "alb_name" {
   default     = "my-alb"
 }
 
+variable "public_subnet_a_id" {
+  description = "ID du sous-réseau privé A"
+  type        = string
+}
 
+variable "public_subnet_b_id" {
+  description = "ID du sous-réseau privé B"
+  type        = string
+}

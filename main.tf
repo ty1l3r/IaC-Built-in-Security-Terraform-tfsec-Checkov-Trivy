@@ -5,6 +5,17 @@
   region = var.region
 }*/
 
+module "bastion" {
+  source                = "./modules/bastion"
+  vpc_id                = module.vpc.vpc_id
+  public_subnet_a_id    = module.vpc.public_subnet_a_id
+  public_subnet_b_id    = module.vpc.public_subnet_b_id
+  vpc_security_group_ids = [module.bastion.bastion_sg_id]
+  certificate_arn       = module.alb.certificate_arn
+  key_name              = module.alb.myec2key_name
+  subnet_id             = [module.vpc.public_subnet_a_id, module.vpc.public_subnet_b_id]
+}
+
 # Module VPC : Crée le VPC, les sous-réseaux publics/privés, et les security groups de base
 module "vpc" {
   source                = "./modules/vpc"
@@ -15,6 +26,8 @@ module "vpc" {
   cidr_private_subnet_b = var.cidr_private_subnet_b #var.cidr_private_subnet_b
   az_a                  = var.az_a #var.az_a
   az_b                  = var.az_b
+  public_subnet_a_id    = module.vpc.public_subnet_a_id
+  public_subnet_b_id    = module.vpc.public_subnet_b_id
 }
 
 # Module RDS : Crée la base de données RDS, en utilisant les sous-réseaux privés pour la haute disponibilité
@@ -25,11 +38,13 @@ module "rds" {
   db_username            = var.db_username
   db_password            = var.db_password
   db_subnet_group        = var.db_subnet_group
-  rds_security_group_id  = var.rds_security_group_id
+  rds_security_group_id  = [module.rds.rds_security_group_id]
   multi_az               = var.multi_az
-  subnet_ids             = var.subnet_ids
+  subnet_ids             = [module.rds.subnet_ids]
   create_read_replica    = var.create_read_replica
   vpc_id                 = module.vpc.vpc_id
+  private_subnet_a_id = module.vpc.private_subnet_a_id  # Passe l'ID du sous-réseau privé A au module RDS
+  private_subnet_b_id = module.vpc.private_subnet_b_id  # Passe l'ID du sous-réseau privé B au module RDS
 }
 
 # Module EC2 : Déploie les instances EC2 pour le Bastion Host et les serveurs WordPress
@@ -42,30 +57,17 @@ module "ec2" {
   private_subnet_a_id       = module.vpc.private_subnet_a_id
   private_subnet_b_id       = module.vpc.private_subnet_b_id
   web_instance_type         = var.web_instance_type
-  wp_security_group_id      = var.wp_security_group_id
 }
 
-# Module ALB : Crée un Load Balancer pour les instances EC2
 module "alb" {
   source              = "./modules/alb"
   vpc_id              = module.vpc.vpc_id
-  public_subnet_a_id  = module.vpc.public_subnet_a_id  # Spécifie le sous-réseau public A
-  public_subnet_b_id  = module.vpc.public_subnet_b_id  # Spécifie le sous-réseau public B
+  public_subnet_a_id  = module.vpc.public_subnet_a_id
+  public_subnet_b_id  = module.vpc.public_subnet_b_id
   alb_name            = var.alb_name
-  target_group_name   = var.target_group_name
-  enable_https        = var.enable_https  # HTTPS activé ou non
-  certificate_arn     = var.certificate_arn # ARN du certificat SSL si HTTPS est activé
+  enable_https        = var.enable_https
+  certificate_arn     = var.enable_https ? var.certificate_arn : null  # Passe null si HTTPS n'est pas activé
   ec2_app_a_id        = module.ec2.ec2_app_a_id
   ec2_app_b_id        = module.ec2.ec2_app_b_id
 }
-/*
-output "vpc_id" {
-  value = module.vpc.vpc_id
-}
-
-output "alb_dns_name" {
-  value = module.alb.alb_dns_name
-}
-*/
-# Sorties
 

@@ -2,7 +2,10 @@
 
 resource "aws_db_subnet_group" "db_subnet_group" {
   name       = "${var.db_subnet_group}-${var.vpc_id}"  # Inclure le VPC ID dans le nom
-  subnet_ids = var.subnet_ids  # Les sous-réseaux doivent être dans des AZs différentes
+     subnet_ids = [
+    var.private_subnet_a_id,  # Utilise la variable passée depuis le module VPC
+    var.private_subnet_b_id   # Utilise la variable passée depuis le module VPC
+  ]
 
   tags = {
     Name = "MyDBSubnetGroup"
