@@ -1,7 +1,6 @@
 resource "aws_key_pair" "myec2key" {
   key_name   = "keypair-wp"
-  count = var.create_key_pair ? 1 : 0
-  public_key = file("/home/ubuntu/project/id_rsa.pub")
+  public_key = file("/home/ubuntu/project/key_rsa.pub")
 }
 
 resource "aws_lb" "lb_app" {
@@ -26,7 +25,7 @@ resource "aws_lb_target_group" "app_vms" {
   protocol = "HTTP"
   vpc_id   = var.vpc_id
   tags = {
-    Name = "lb_target_groupe-apps_vms"
+    Name = "WT-lb_target_groupe-apps_vms"
   }
 }
 

@@ -116,70 +116,6 @@ variable "web_instance_count" {
   default     = 2
 }
 
-
-
-
-/*# ID du sous-réseau public pour le Bastion Host
-variable "public_subnet_id" {
-  description = "ID du Subnet Public pour déployer le Bastion Host"
-  type        = string
-}
-
-variable "target_group_name" {
-  description = "Nom du groupe cible"
-  type        = string
-}
-
-variable "wp_security_group_id" {
-  description = "ID du Security Group pour les instances WordPress"
-  type        = string
-}
-
-# ID du Security Group pour les instances WordPress
-variable "web_security_group_id" {
-  description = "ID du Security Group pour les instances WordPress"
-  type        = string
-}
-
-variable "subnet_ids" {
-  description = "Liste des IDs des sous-réseaux où le RDS sera déployé"
-  type        = list(string)
-}
-
-variable "rds_security_group_id" {
-  description = "Liste des IDs des groupes de sécurité associés à l'instance RDS"
-  type        = list(string)
-}
-
-# Variable pour l'ID du sous-réseau public B
-variable "public_subnet_b_id" {
-  description = "L'ID du sous-réseau public B"
-  type        = string
-}
-
-# ID du sous-réseau privé pour les instances WordPress
-variable "private_subnet_id" {
-  description = "ID du Subnet Privé pour déployer les instances WordPress"
-  type        = string
-}
-variable "private_subnets" {
-  description = "List of private subnet CIDRs"
-  type        = list(string)
-}
-
-# Variable pour l'ID du sous-réseau public A
-variable "public_subnet_a_id" {
-  description = "L'ID du sous-réseau public A"
-  type        = string
-}
-
-variable "public_subnets" {
-  description = "List of public subnet CIDRs"
-  type        = list(string)
-}
-
-*/
-
 # Zones de disponibilité (AZs) dans lesquelles déployer les sous-réseaux
 variable "availability_zones" {
   description = "Liste des zones de disponibilité pour les sous-réseaux"
@@ -239,8 +175,9 @@ variable "vpc_security_group_name" {
   default     = "vpc_security_group"  # Vous pouvez définir un nom par défaut ici
 }
 
+/*
 variable "vpc_id" {
   description = "Id du VPC par défaut"
   type        = string
   default     = "vpc-075d7129a250b342d"
-}
+}*/

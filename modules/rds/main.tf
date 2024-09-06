@@ -8,7 +8,7 @@ resource "aws_db_subnet_group" "db_subnet_group" {
   ]
 
   tags = {
-    Name = "MyDBSubnetGroup"
+    Name = "WT-MyDBSubnetGroup"
   }
 }
 
@@ -33,7 +33,7 @@ resource "aws_db_instance" "main" {
   skip_final_snapshot     = true  # Ne pas créer de snapshot final lors de la suppression
 
   tags = {
-    Name = "PrimaryRDSInstance"
+    Name = "WT-PrimaryRDSInstance"
   }
 }
 
@@ -46,6 +46,6 @@ resource "aws_db_instance" "read_replica" {
   #rds_security_group_id = [aws_security_group.rds.id]  # Assurez-vous que ce soit cohérent avec l'instance principale
 
   tags = {
-    Name = "ReadReplicaRDSInstance"
+    Name = "WT-ReadReplicaRDSInstance"
   }
 }

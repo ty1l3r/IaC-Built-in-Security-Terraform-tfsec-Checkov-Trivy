@@ -1,10 +1,5 @@
 # main.tf root
 
-# Fournisseur Terraform (AWS)
-/*provider "aws" {
-  region = var.region
-}*/
-
 module "bastion" {
   source                = "./modules/bastion"
   vpc_id                = module.vpc.vpc_id
@@ -24,7 +19,7 @@ module "vpc" {
   cidr_public_subnet_b  = var.cidr_public_subnet_b  #var.cidr_public_subnet_b
   cidr_private_subnet_a = var.cidr_private_subnet_a
   cidr_private_subnet_b = var.cidr_private_subnet_b #var.cidr_private_subnet_b
-  az_a                  = var.az_a #var.az_a
+  az_a                  = var.az_a
   az_b                  = var.az_b
   public_subnet_a_id    = module.vpc.public_subnet_a_id
   public_subnet_b_id    = module.vpc.public_subnet_b_id
@@ -43,8 +38,8 @@ module "rds" {
   subnet_ids             = [module.rds.subnet_ids]
   create_read_replica    = var.create_read_replica
   vpc_id                 = module.vpc.vpc_id
-  private_subnet_a_id = module.vpc.private_subnet_a_id  # Passe l'ID du sous-réseau privé A au module RDS
-  private_subnet_b_id = module.vpc.private_subnet_b_id  # Passe l'ID du sous-réseau privé B au module RDS
+  private_subnet_a_id = module.vpc.private_subnet_a_id
+  private_subnet_b_id = module.vpc.private_subnet_b_id
 }
 
 # Module EC2 : Déploie les instances EC2 pour le Bastion Host et les serveurs WordPress
@@ -57,6 +52,7 @@ module "ec2" {
   private_subnet_a_id       = module.vpc.private_subnet_a_id
   private_subnet_b_id       = module.vpc.private_subnet_b_id
   web_instance_type         = var.web_instance_type
+  bastion_sg_id = module.bastion.bastion_sg_id
 }
 
 module "alb" {

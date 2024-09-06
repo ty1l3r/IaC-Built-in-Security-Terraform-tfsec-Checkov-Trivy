@@ -1,6 +1,9 @@
 # modules/ec2/variables.tf
 
-
+variable "bastion_sg_id" {
+  description = "ID du Security Group du Bastion"
+  type        = string
+}
 ############### USED
 
 # Variable pour l'ID du sous-réseau privé A

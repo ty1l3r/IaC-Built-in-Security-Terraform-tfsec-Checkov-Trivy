@@ -6,7 +6,7 @@ resource "aws_key_pair" "myec2key" {
   public_key = "${file("~/.ssh/id_rsa.pub")}"
 }
 
-# Instance EC2 pour WordPress - Déployée dans un sous-réseau privé A
+# Instance EC2 App
 resource "aws_instance" "ec2_app_a" {
   ami = data.aws_ami.latest_amazon_linux.id
   instance_type          = var.bastion_instance_type
@@ -15,11 +15,11 @@ resource "aws_instance" "ec2_app_a" {
   key_name               = aws_key_pair.myec2key.key_name
   user_data = "${file("wp.sh")}"
   tags = {
-    Name        = "app_wp_a"
+    Name        = "WT-app_wp_a"
   }
 }
 
-# Instance EC2 pour WordPress - Déployée dans un sous-réseau privé b
+# Instance EC2 App
 resource "aws_instance" "ec2_app_b" {
   ami = data.aws_ami.latest_amazon_linux.id
   instance_type          = var.bastion_instance_type
@@ -28,7 +28,7 @@ resource "aws_instance" "ec2_app_b" {
   key_name               = aws_key_pair.myec2key.key_name
   user_data = "${file("wp.sh")}"
   tags = {
-    Name        = "app_wp_b"
+    Name        = "WT-app_wp_b"
   }
 }
 

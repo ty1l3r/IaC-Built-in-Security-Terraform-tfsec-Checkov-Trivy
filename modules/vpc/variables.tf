@@ -12,7 +12,7 @@ variable "environment" {
 variable "vpc_cidr" {
   description = "CIDR block pour le VPC"
   type        = string
-  default     = "10.0.0.0/16"
+  default     = "10.0.0.0/20"
 }
 
 variable "cidr_public_subnet_a" {
@@ -56,11 +56,11 @@ variable "alb_name" {
 }
 
 variable "public_subnet_a_id" {
-  description = "ID du sous-réseau privé A"
+  description = "ID du sous-réseau public A"
   type        = string
 }
 
 variable "public_subnet_b_id" {
-  description = "ID du sous-réseau privé B"
+  description = "ID du sous-réseau public B"
   type        = string
 }

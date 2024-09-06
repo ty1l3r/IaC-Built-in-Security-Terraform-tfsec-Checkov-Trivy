@@ -10,7 +10,7 @@ resource "aws_instance" "bastion" {
   vpc_security_group_ids = [aws_security_group.sg_bastion.id]
   key_name               = var.key_name
   tags = {
-    Name = "bastion-${count.index}"  # Un nom unique pour chaque instance
+    Name = "WT-bastion-${count.index}"  # Un nom unique pour chaque instance
   }
 }
 
@@ -20,7 +20,7 @@ resource "aws_network_acl" "public_a" {
   vpc_id = var.vpc_id
   subnet_ids = [var.public_subnet_a_id]
   tags = {
-    Name        = "nacl-public-a"
+    Name        = "WT-nacl-public-a"
   }
 }
 
@@ -29,7 +29,7 @@ resource "aws_network_acl" "public_b" {
   vpc_id = var.vpc_id
   subnet_ids = [var.public_subnet_b_id]
   tags = {
-    Name        = "nacl-public-b"
+    Name        = "WT-nacl-public-b"
   }
 }
 

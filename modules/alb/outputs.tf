@@ -18,7 +18,6 @@ output "enable_https" {
   value       = var.enable_https
 }
 
-
 output "alb_dns_name" {
   description = "Le nom DNS de l'Application Load Balancer"
   value       = aws_lb.lb_app.dns_name
@@ -26,7 +25,8 @@ output "alb_dns_name" {
 
 # modules/alb/outputs.tf
 output "myec2key_name" {
-  description = "Nom de la clé publique SSH générée"
-  value       = length(aws_key_pair.myec2key) > 0 ? aws_key_pair.myec2key[0].key_name : ""
+  description = "Nom de la paire de clés SSH"
+  value       = aws_key_pair.myec2key.key_name
 }
+
 

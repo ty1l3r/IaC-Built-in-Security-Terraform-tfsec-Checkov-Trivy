@@ -1,7 +1,7 @@
 # alb/security_groups.tf
 
 resource "aws_security_group" "alb" {
-  name        = "alb_security_group"
+  name        = "alb_security_group-WT"
   description = "Security group for ALB"
   vpc_id      = var.vpc_id
 
@@ -33,6 +33,6 @@ resource "aws_security_group" "alb" {
   }
 
   tags = {
-    Name = "ALBSecurityGroup"
+    Name = "WT-ALBSecurityGroup"
   }
 }

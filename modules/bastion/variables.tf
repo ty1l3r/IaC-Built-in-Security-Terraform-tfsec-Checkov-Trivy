@@ -18,7 +18,7 @@ variable "vpc_security_group_ids" {
   type        = list(string)
 }
 
-# modules/bastion/variables.tf
+
 variable "certificate_arn" {
   description = "ARN du certificat SSL à utiliser pour le Bastion"
   type        = string
@@ -33,9 +33,3 @@ variable "subnet_id" {
   description = "Liste des IDs des sous-réseaux où le RDS sera déployé"
   type        = list(string)
 }
-
-
-/*variable "certificate_arn" {
-  description = "ARN du certificat SSL à utiliser pour HTTPS"
-  type        = string
-}*/

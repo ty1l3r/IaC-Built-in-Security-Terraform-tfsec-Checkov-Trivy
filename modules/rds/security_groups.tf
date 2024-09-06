@@ -5,6 +5,9 @@ resource "aws_security_group" "rds" {
   name        = "rds_security_group"  # Nom du groupe de sécurité
   description = "Security group for RDS instance"  # Description pour identifier l'usage du groupe de sécurité
   vpc_id      = var.vpc_id  # ID du VPC dans lequel ce groupe de sécurité sera créé
+    tags = {
+    Name = "WT-RDSSecurityGroup-WT"  # Nom donné au groupe de sécurité pour l'identifier dans la console AWS
+  }
 
   # Configuration de la règle d'entrée (ingress)
   ingress {
@@ -23,7 +26,5 @@ resource "aws_security_group" "rds" {
   }
 
   # Tags pour identifier et gérer le groupe de sécurité
-  tags = {
-    Name = "RDSSecurityGroup"  # Nom donné au groupe de sécurité pour l'identifier dans la console AWS
-  }
+
 }
