@@ -9,10 +9,15 @@ resource "aws_instance" "bastion" {
   subnet_id              = element(var.subnet_id, count.index)  # Utilise la variable passée depuis le module root
   vpc_security_group_ids = [aws_security_group.sg_bastion.id]
   key_name               = var.key_name
+
+  # Cette ligne garantit que chaque instance obtient une IP publique
+  associate_public_ip_address = true
+
   tags = {
     Name = "WT-bastion-${count.index}"  # Un nom unique pour chaque instance
   }
 }
+
 
 ## NACL ######################################################
 # Créer un NACL pour accéder à l'hôte bastion via le port 22 PORT A
