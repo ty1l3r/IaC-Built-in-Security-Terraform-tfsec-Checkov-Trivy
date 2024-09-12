@@ -23,14 +23,15 @@ output "private_subnet_b_id" {
 }
 
 output "public_subnet_a_id" {
-  description = "L'ID du sous-réseau public A"
+  description = "ID du sous-réseau public A"
   value       = aws_subnet.public_subnet_a.id
 }
 
 output "public_subnet_b_id" {
-  description = "L'ID du sous-réseau public B"
+  description = "ID du sous-réseau public B"
   value       = aws_subnet.public_subnet_b.id
 }
+
 
 output "az_a" {
   description = "Zone de disponibilité A"

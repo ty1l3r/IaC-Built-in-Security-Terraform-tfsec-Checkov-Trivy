@@ -2,7 +2,7 @@
 
 variable "bastion_sg_id" {
   description = "ID du Security Group du Bastion"
-  type        = string
+  type        = list(string)
 }
 ############### USED
 
@@ -23,8 +23,13 @@ variable "vpc_id" {
   type        = string
 }
 
+
+variable "private_wp_sg_id" {
+  description = "ID du groupe de sécurité privé WordPress"
+  type        = string
+}
 # Type d'instance pour le Bastion Host
-variable "bastion_instance_type" {
+variable "app_instance_type" {
   description = "Type d'instance pour le Bastion Host"
   type        = string
   default     = "t2.micro"
@@ -49,3 +54,12 @@ variable "environment" {
 }
 
 
+variable "launch_template_id" {
+  description = "ID du template de lancement pour l'ASG"
+  type        = string
+}
+
+variable "target_group_arn" {
+  description = "ARN du groupe cible pour l'ALB"
+  type        = string
+}

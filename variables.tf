@@ -2,11 +2,21 @@
 
 ##### USE
 
-variable "enable_https" {
-  description = "Activer HTTPS pour le ALB"
-  type        = bool
-  default     = false
-}
+# variable "enable_https" {
+#   description = "Activer HTTPS pour le ALB"
+#   type        = bool
+#   default     = false
+# }
+
+# variable "bastion_sg_id" {
+#   description = "Liste des IDs des sous-réseaux où le RDS sera déployé"
+#   type        = list(string)
+# }
+
+# variable "private_wp_sg_id" {
+#   description = "Liste des IDs des Security Groups privés pour les instances WP"
+#   type        = list(string)
+# }
 
 # Variable pour l'ID du Bastion
 variable "bastion_id" {
@@ -15,30 +25,17 @@ variable "bastion_id" {
   default = ""
 }
 
-variable "certificate_arn" {
-  type        = string
-  description = "ARN du certificat SSL pour HTTPS"
-  default     = null  # Définit par défaut à null si aucun certificat n'est fourni
-}
+# variable "certificate_arn" {
+#   type        = string
+#   description = "ARN du certificat SSL pour HTTPS"
+#   default     = null  # Définit par défaut à null si aucun certificat n'est fourni
+# }
 
 variable "alb_name" {
   description = "Nom de l'Application Load Balancer"
   type        = string
   default     = "my-alb"
 }
-
-
-
-
-###### TO SEE
-
-
-
-
-
-
-
-
 
 variable "az_a" {
   description = "zone de disponibilité a"
@@ -75,13 +72,13 @@ variable "cidr_private_subnet_b" {
 }
 
 variable "project" {
-  description = "KANGOUROUUUUUUUXX"
+  description = "fabien-Terraform-Project"
   type        = string
 }
 
 # Définition des variables pour l'environnement et le projet
 variable "environment" {
-  description = "Environnement (e.g., dev, prod)"
+  description = "Prod"
   type        = string
 }
 
@@ -95,12 +92,12 @@ variable "create_read_replica" {
 }
 
 
-# Type d'instance pour le Bastion Host
-variable "bastion_instance_type" {
-  description = "Type d'instance pour le Bastion Host"
-  type        = string
-  default     = "t2.micro"
-}
+# # Type d'instance pour le Bastion Host
+# variable "bastion_instance_type" {
+#   description = "Type d'instance pour le Bastion Host"
+#   type        = string
+#   default     = "t2.micro"
+# }
 
 # Type d'instance pour les serveurs WordPress
 variable "web_instance_type" {

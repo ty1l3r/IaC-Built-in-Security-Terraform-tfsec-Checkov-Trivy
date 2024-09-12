@@ -55,12 +55,12 @@ variable "alb_name" {
   default     = "my-alb"
 }
 
-variable "public_subnet_a_id" {
-  description = "ID du sous-réseau public A"
-  type        = string
-}
+# variable "public_subnet_a_id" {
+#   description = "ID du sous-réseau public A"
+#   type        = string
+# }
 
-variable "public_subnet_b_id" {
-  description = "ID du sous-réseau public B"
-  type        = string
-}
+# variable "public_subnet_b_id" {
+#   description = "ID du sous-réseau public B"
+#   type        = string
+# }

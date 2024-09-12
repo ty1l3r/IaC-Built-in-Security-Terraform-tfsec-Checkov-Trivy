@@ -27,6 +27,9 @@ find /var/www -type f -exec sudo chmod 0664 {} \;
 # Create a PHP info page for testing
 echo "<?php phpinfo(); ?>" > /var/www/html/phpinfo.php
 
+# ** Health Check Page **
+echo "healthy" > /var/www/html/healthcheck.html  # Créer une page de health check
+
 # Install required PHP modules
 sudo yum install -y php php-{pear,cgi,common,curl,mbstring,gd,mysqlnd,gettext,bcmath,json,xml,fpm,intl,zip,imap}
 

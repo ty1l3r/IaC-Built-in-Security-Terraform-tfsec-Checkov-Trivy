@@ -1,0 +1,2 @@
+# modules/ami/variables.tf
+

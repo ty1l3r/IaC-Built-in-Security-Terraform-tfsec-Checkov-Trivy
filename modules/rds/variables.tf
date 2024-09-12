@@ -8,31 +8,32 @@ variable "vpc_id" {
 variable "db_instance_class" {
   description = "Type d'instance pour RDS"
   type        = string
-  default     = "db.t3.micro"  # Instance de type petite pour les tests, à adapter en production
+  default     = "db.t3.micro"
 }
 
 variable "db_name" {
   description = "Nom de la base de données MySQL"
   type        = string
-  default     = "mydatabase"
+  default     = "fabien-database"
 }
 
 variable "db_username" {
   description = "Nom d'utilisateur administrateur pour MySQL"
   type        = string
   default     = "admin"
+  sensitive   = true
 }
 
 variable "db_password" {
   description = "Mot de passe pour l'utilisateur administrateur de MySQL"
   type        = string
-  sensitive   = true  # Marquer comme sensible pour ne pas afficher le mot de passe en clair
+  sensitive   = true
 }
 
 variable "db_subnet_group" {
   description = "Nom du groupe de sous-réseaux pour RDS"
   type        = any
-  default     = "my-db-subnet-group"
+  default     = "fabien-DBSubnetGroup"
 }
 
 variable "rds_security_group_id" {
@@ -43,7 +44,7 @@ variable "rds_security_group_id" {
 variable "multi_az" {
   description = "Activer le déploiement Multi-AZ"
   type        = bool
-  default     = true  # Activer par défaut pour la haute disponibilité
+  default     = true
 }
 
 variable "subnet_ids" {
@@ -66,18 +67,3 @@ variable "private_subnet_b_id" {
   description = "ID du sous-réseau privé B"
   type        = string
 }
-
-
-
-/*
-variable "private_subnet_a" {
-  description = "CIDR du sous reseaux public a"
-  type = string
-  default = "10.0.0.0/19"
-}
-
-variable "private_subnet_b" {
-  description = "CIDR du sous reseaux private a"
-  type = string
-  default = "10.0.32.0/19"
-}*/

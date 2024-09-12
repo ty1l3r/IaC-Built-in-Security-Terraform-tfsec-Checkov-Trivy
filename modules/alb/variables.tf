@@ -1,9 +1,7 @@
 # alb/variables.tf
 
-############################# utilisés sûr
-
 variable "vpc_id" {
-  description = "L'ID du VPC où le ALB sera déployé"
+  description = "ID du VPC pour l'ALB "
   type        = string
 }
 
@@ -17,12 +15,17 @@ variable "public_subnet_b_id" {
   type        = string
 }
 
+variable "web_instance_type" {
+  description = "Type d'instance pour les serveurs WordPress"
+  type        = string
+  default     = "t2.micro"
+}
+
 variable "alb_name" {
   description = "Nom de l'Application Load Balancer"
   type        = string
-  default     = "my-alb"
+  default     = "fabien-alb"
 }
-
 
 variable "enable_https" {
   description = "Activer HTTPS pour le ALB"
@@ -30,10 +33,14 @@ variable "enable_https" {
   default     = false
 }
 
-variable "certificate_arn" {
+variable "ami_id" {
+  description = "ID de l'AMI à utiliser"
   type        = string
-  description = "ARN du certificat SSL pour HTTPS"
-  default     = null  # Définit par défaut à null si aucun certificat n'est fourni
+}
+
+variable "key_name" {
+  description = "Nom de la clé SSH"
+  type        = string
 }
 
 variable "ec2_app_a_id" {
@@ -46,7 +53,7 @@ variable "ec2_app_b_id" {
   type        = string
 }
 
-variable "create_key_pair" {
-  description = "Indique si la Key Pair doit être créée"
-  default     = false
+variable "private_wp_sg_id" {
+  description = "ID du groupe de sécurité pour les instances WordPress"
+  type        = list(string)
 }

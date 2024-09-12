@@ -4,7 +4,7 @@ resource "aws_vpc" "main_vpc" {
   enable_dns_support   = true
   enable_dns_hostnames = true
   tags = {
-    Name        = "MainVPC-WT"
+    Name        = "Fabien-VPC"
     Environment = var.environment
   }
 }
@@ -13,7 +13,7 @@ resource "aws_vpc" "main_vpc" {
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main_vpc.id
   tags = {
-    Name = "Main-IGW-WT"
+    Name = "Fabien-IGW"
   }
 }
 
@@ -39,7 +39,7 @@ resource "aws_subnet" "public_subnet_a" {
   map_public_ip_on_launch = true  # Assure l'attribution d'IP publique pour les instances
   availability_zone       = var.az_a
   tags = {
-    Name        = "public-a-WT"
+    Name        = "fabien-public-subnet-a"
     Environment = var.environment
   }
 }
@@ -50,11 +50,10 @@ resource "aws_subnet" "public_subnet_b" {
   map_public_ip_on_launch = true  # Assure l'attribution d'IP publique pour les instances
   availability_zone       = var.az_b
   tags = {
-    Name        = "WT-public-b"
+    Name        = "fabien-public-subnet-b"
     Environment = var.environment
   }
 }
-
 
 # === SUBNETS PRIVATE A & B =======================================================
 
@@ -65,7 +64,7 @@ resource "aws_subnet" "private_subnet_a" {
   map_public_ip_on_launch = false  # Pas d'IP publique pour les sous-réseaux privés
   availability_zone       = var.az_a
   tags = {
-    Name        = "WT-private-subnet-a"
+    Name        = "fabien-private-subnet-a"
     Environment = var.environment
   }
 }
@@ -77,7 +76,7 @@ resource "aws_subnet" "private_subnet_b" {
   map_public_ip_on_launch = false  # Pas d'IP publique pour les sous-réseaux privés
   availability_zone       = var.az_b
   tags = {
-    Name        = "WT-private-subnet-b"
+    Name        = "fabien-private-subnet-b"
     Environment = var.environment
   }
 }
@@ -89,7 +88,7 @@ resource "aws_nat_gateway" "gw_public_a" {
   allocation_id = aws_eip.eip_public_a.id
   subnet_id     = aws_subnet.public_subnet_a.id
   tags = {
-    Name = "WT-nat-public-a"
+    Name = "fabien-nat-public-a"
   }
 }
 # === Création de la NAT Gateway  public B
@@ -97,7 +96,7 @@ resource "aws_nat_gateway" "gw_public_b" {
   allocation_id = aws_eip.eip_public_b.id
   subnet_id     = aws_subnet.public_subnet_b.id
   tags = {
-    Name = "WT-nat-public-b"
+    Name = "fabien-nat-public-b"
   }
 }
 
@@ -111,7 +110,7 @@ resource "aws_route_table" "public_route_a" {
     gateway_id = aws_internet_gateway.igw.id  # Utilise l'IGW pour la connectivité Internet
   }
   tags = {
-    Name        = "WT-public-routage-a"
+    Name        = "fabien-route-public-a"
   }
 }
 
@@ -124,7 +123,7 @@ resource "aws_route_table" "public_route_b" {
     gateway_id = aws_internet_gateway.igw.id  # Utilise l'IGW pour la connectivité Internet
   }
    tags = {
-    Name        = "WT-public-b"
+    Name        = "fabien-route-public-b"
     Environment = var.environment
   }
 }
@@ -135,7 +134,7 @@ resource "aws_route_table" "public_route_b" {
 resource "aws_route_table" "rtb_app_a" {
   vpc_id = aws_vpc.main_vpc.id  # Associe la table au VPC
   tags = {
-    Name = "WT-app-a-routetable"  # Nom de la table
+    Name = "fabien-routetable-private-a"  # Nom de la table
   }
 }
 # Ajoute une route pour rediriger le trafic vers la NAT Gateway
@@ -152,14 +151,13 @@ resource "aws_route_table_association" "rta_subnet_association_priv_a" {
   route_table_id = aws_route_table.rtb_app_a.id    # Table de routage privée A
 }
 
-
 # === ROUTES TABLES PRIVE B =======================================================
 
 # Crée une table de routage pour le sous-réseau privé B
 resource "aws_route_table" "rtb_app_b" {
   vpc_id = aws_vpc.main_vpc.id  # Associe la table au VPC
   tags = {
-    Name = "WT-app-b-routetable"  # Nom de la table
+    Name = "fabien-routetable-private-b"  # Nom de la table
   }
 }
 
