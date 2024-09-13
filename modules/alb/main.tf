@@ -54,10 +54,13 @@ resource "aws_launch_template" "wordpress" {
   instance_type = var.web_instance_type
   key_name      = var.key_name
 
-  user_data = base64encode(file("${path.root}/wp.sh"))
+  user_data = base64encode(templatefile("${path.root}/wp.sh", {
+  rds_endpoint = var.rds_endpoint,
+  WORDPRESS_DIR = "/var/www/html"
+}))
+
 
   network_interfaces {
-    associate_public_ip_address = true
     security_groups             = var.private_wp_sg_id
   }
 

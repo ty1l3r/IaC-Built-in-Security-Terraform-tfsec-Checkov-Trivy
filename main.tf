@@ -39,6 +39,7 @@ module "rds" {
   vpc_id                 = module.vpc.vpc_id
   private_subnet_a_id = module.vpc.private_subnet_a_id
   private_subnet_b_id = module.vpc.private_subnet_b_id
+  wordpress_security_group_id = [module.ec2.private_wp_sg_id]
 }
 
 # Module EC2 : Déploie les instances EC2 pour le Bastion Host et les serveurs WordPress
@@ -54,6 +55,9 @@ module "ec2" {
   bastion_sg_id             = [module.bastion.bastion_sg_id]
   launch_template_id        = module.alb.wordpress_launch_template_id
   target_group_arn          = module.alb.target_group_arn
+  alb_security_group_id = [module.alb.alb_security_group_id]
+
+
 }
 
 module "alb" {
@@ -62,10 +66,10 @@ module "alb" {
   public_subnet_a_id  = module.vpc.public_subnet_a_id
   public_subnet_b_id  = module.vpc.public_subnet_b_id
   alb_name            = var.alb_name
-  ec2_app_a_id        = module.ec2.ec2_app_a_id
-  ec2_app_b_id        = module.ec2.ec2_app_b_id
   ami_id              = module.ami.ami_id
   key_name            = module.ec2.key_name
   private_wp_sg_id    = [module.ec2.private_wp_sg_id]
+  web_instance_type   = var.web_instance_type
+  rds_endpoint        = module.rds.rds_endpoint
 }
 

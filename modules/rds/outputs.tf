@@ -52,3 +52,7 @@ output "multi_az" {
   value       = var.multi_az
   description = "Indique si le déploiement Multi-AZ est activé"
 }
+output "rds_endpoint" {
+  value = aws_db_instance.main.endpoint
+  description = "The RDS instance endpoint"
+}

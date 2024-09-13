@@ -5,6 +5,11 @@ variable "vpc_id" {
   type        = string
 }
 
+variable "wordpress_security_group_id" {
+  description = "ID du groupe de sécurité des instances WordPress"
+  type        = list(string)
+}
+
 variable "db_instance_class" {
   description = "Type d'instance pour RDS"
   type        = string
@@ -14,13 +19,13 @@ variable "db_instance_class" {
 variable "db_name" {
   description = "Nom de la base de données MySQL"
   type        = string
-  default     = "fabien-database"
+  #default     = "fabien-database"
 }
 
 variable "db_username" {
   description = "Nom d'utilisateur administrateur pour MySQL"
   type        = string
-  default     = "admin"
+  #default     = "admin"
   sensitive   = true
 }
 

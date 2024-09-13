@@ -8,6 +8,11 @@
 #   value       = aws_lb.lb_app.arn
 # }
 
+# modules/alb/outputs.tf
+output "alb_security_group_id" {
+  value = aws_security_group.alb.id
+}
+
 output "target_group_name" {
   description = "Nom du groupe cible de l'ALB"
   value       = aws_lb_target_group.app_vms.name

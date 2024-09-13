@@ -1,5 +1,14 @@
 # modules/ec2/variables.tf
 
+
+# variable "private_wp_sg_id" {
+#   description = "ID du Security Group du Bastion"
+#   type        = list(string)
+# }
+variable "alb_security_group_id" {
+  description = "ID du groupe de sécurité pour l'ALB"
+  type        = list(string)
+}
 variable "bastion_sg_id" {
   description = "ID du Security Group du Bastion"
   type        = list(string)
@@ -62,4 +71,9 @@ variable "launch_template_id" {
 variable "target_group_arn" {
   description = "ARN du groupe cible pour l'ALB"
   type        = string
+}
+
+variable "region_name" {
+  description = "Nom de la région AWS"
+  default     = "eu-west-3"
 }

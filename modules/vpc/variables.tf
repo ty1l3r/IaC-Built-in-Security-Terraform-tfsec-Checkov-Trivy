@@ -12,7 +12,7 @@ variable "environment" {
 variable "vpc_cidr" {
   description = "CIDR block pour le VPC"
   type        = string
-  default     = "10.0.0.0/20"
+  default     = "10.0.0.0/16"
 }
 
 variable "cidr_public_subnet_a" {
