@@ -35,20 +35,27 @@ resource "aws_security_group" "sg_private_wp" {
 
   # Egress rules (sorties)
 
-   # Egress vers RDS (MySQL, port 3306)
+  # Egress vers RDS (MySQL, port 3306) — toujours permissif pour déboguer
   egress {
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/16"]  # Connexion sortante vers RDS uniquement dans le VPC
+    cidr_blocks = ["0.0.0.0/0"]  # Permissif : autoriser toutes les connexions vers RDS
   }
 
+  # Egress SSH (port 22) sortant — autorisation de SSH sortant (vers Bastion ou autre)
+  egress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Permissif : SSH sortant
+  }
 
-    # Permettre tout autre trafic sortant
+  # Permettre tout autre trafic sortant (par défaut)
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]  # Autoriser tout autre trafic sortant
+    cidr_blocks = ["0.0.0.0/0"]  # Permettre tout autre trafic sortant
   }
 }

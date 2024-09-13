@@ -32,14 +32,12 @@ module "rds" {
   db_username            = var.db_username
   db_password            = var.db_password
   db_subnet_group        = var.db_subnet_group
-  rds_security_group_id  = [module.rds.rds_security_group_id]
   multi_az               = var.multi_az
   subnet_ids             = [module.rds.subnet_ids]
   create_read_replica    = var.create_read_replica
   vpc_id                 = module.vpc.vpc_id
   private_subnet_a_id = module.vpc.private_subnet_a_id
   private_subnet_b_id = module.vpc.private_subnet_b_id
-  wordpress_security_group_id = [module.ec2.private_wp_sg_id]
 }
 
 # Module EC2 : Déploie les instances EC2 pour le Bastion Host et les serveurs WordPress

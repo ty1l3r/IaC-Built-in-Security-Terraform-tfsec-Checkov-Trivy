@@ -7,10 +7,10 @@ output "db_subnet_group" {
 }
 
 # Output des IDs des groupes de sécurité associés à l'instance RDS
-output "rds_security_group_id" {
-  value       = aws_security_group.rds.id
-  description = "Liste des IDs des groupes de sécurité associés à l'instance RDS"
-}
+# output "rds_security_group_id" {
+#   value       = aws_security_group.rds.id
+#   description = "Liste des IDs des groupes de sécurité associés à l'instance RDS"
+# }
 
 # Output du nom de la base de données
 output "db_name" {
@@ -53,6 +53,19 @@ output "multi_az" {
   description = "Indique si le déploiement Multi-AZ est activé"
 }
 output "rds_endpoint" {
-  value = aws_db_instance.main.endpoint
+  value = aws_db_instance.main.address
   description = "The RDS instance endpoint"
 }
+
+
+# output "rds_hostname" {
+#   description = "RDS instance hostname"
+#   value       = aws_db_instance.education.address
+#   sensitive   = true
+# }
+
+# output "rds_port" {
+#   description = "RDS instance port"
+#   value       = aws_db_instance.education.port
+#   sensitive   = true
+# }

@@ -5,8 +5,10 @@ DB_NAME="fabienDatabase"            # Name of the database
 DB_USER="admin"                     # Database username
 DB_PASSWORD="adminadmin"            # Database password
 WORDPRESS_DIR="/var/www/html"       # WordPress code directory
-RDS_ENDPOINT=$(echo "${rds_endpoint}" | sed 's/:3306//')
+RDS_ENDPOINT="${rds_endpoint}"       # Directly use the endpoint with port
 
+# Echo the RDS endpoint for debugging
+echo "RDS Endpoint: $RDS_ENDPOINT"
 
 # Update the system
 sudo yum update -y
@@ -42,9 +44,9 @@ echo "healthy" > /var/www/html/healthcheck.html  # Create a health check page
 sudo yum install -y mysql
 
 # Create the WordPress database and user on RDS
-mysql -h $RDS_ENDPOINT -u $DB_USER -p$DB_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $DB_NAME;" || { echo "Database creation failed"; exit 1; }
-mysql -h $RDS_ENDPOINT -u $DB_USER -p$DB_PASSWORD -e "GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'%';" || { echo "Granting privileges failed"; exit 1; }
-mysql -h $RDS_ENDPOINT -u $DB_USER -p$DB_PASSWORD -e "FLUSH PRIVILEGES;" || { echo "Flushing privileges failed"; exit 1; }
+mysql -h "$RDS_ENDPOINT" -u "$DB_USER" -p"$DB_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS $DB_NAME;" || { echo "Database creation failed"; exit 1; }
+mysql -h "$RDS_ENDPOINT" -u "$DB_USER" -p"$DB_PASSWORD" -e "GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'%';" || { echo "Granting privileges failed"; exit 1; }
+mysql -h "$RDS_ENDPOINT" -u "$DB_USER" -p"$DB_PASSWORD" -e "FLUSH PRIVILEGES;" || { echo "Flushing privileges failed"; exit 1; }
 
 # Download and install WordPress only if not already installed
 if [ ! -d "$WORDPRESS_DIR/wp-admin" ]; then

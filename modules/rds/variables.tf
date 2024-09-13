@@ -5,10 +5,10 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "wordpress_security_group_id" {
-  description = "ID du groupe de sécurité des instances WordPress"
-  type        = list(string)
-}
+# variable "wordpress_security_group_id" {
+#   description = "ID du groupe de sécurité des instances WordPress"
+#   type        = list(string)
+# }
 
 variable "db_instance_class" {
   description = "Type d'instance pour RDS"
@@ -41,10 +41,10 @@ variable "db_subnet_group" {
   default     = "fabien-DBSubnetGroup"
 }
 
-variable "rds_security_group_id" {
-  description = "Liste des IDs des groupes de sécurité associés à l'instance RDS"
-  type        = list(string)
-}
+# variable "rds_security_group_id" {
+#   description = "Liste des IDs des groupes de sécurité associés à l'instance RDS"
+#   type        = list(string)
+# }
 
 variable "multi_az" {
   description = "Activer le déploiement Multi-AZ"
