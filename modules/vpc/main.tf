@@ -1,4 +1,4 @@
-# === Création du VPC ===
+### Création du VPC ###
 resource "aws_vpc" "main_vpc" {
   cidr_block           = var.vpc_cidr
   enable_dns_support   = true
@@ -9,7 +9,7 @@ resource "aws_vpc" "main_vpc" {
   }
 }
 
-# === Création de l'Internet Gateway (IGW) ===
+### Création de l'Internet Gateway (IGW) ###
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main_vpc.id
   tags = {
@@ -17,22 +17,21 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-# === ELASTIC IP A & B =======================================================
+### ELASTIC IP A & B ###
 
-# === Création de l'Elastic IP pour la NAT Gateway du sous-réseau public A ===
+# Création de l'Elastic IP pour la NAT Gateway du sous-réseau public A
 resource "aws_eip" "eip_public_a" {
   domain = "vpc"
 }
 
-# === Création de l'Elastic IP pour la NAT Gateway du sous-réseau public B ===
+# Création de l'Elastic IP pour la NAT Gateway du sous-réseau public B
 resource "aws_eip" "eip_public_b" {
   domain = "vpc"
 }
 
+### SUBNETS PUBLIC A & B ###
 
-# === SUBNETS PUBLIC A & B =======================================================
-
-# === Sous-réseau public A ===
+# Sous-réseau public A
 resource "aws_subnet" "public_subnet_a" {
   vpc_id                  = aws_vpc.main_vpc.id
   cidr_block              = var.cidr_public_subnet_a  # Utilise la plage IP : 10.0.128.0/20
@@ -43,7 +42,8 @@ resource "aws_subnet" "public_subnet_a" {
     Environment = var.environment
   }
 }
-# === Sous-réseau public B ===
+
+# Sous-réseau public B
 resource "aws_subnet" "public_subnet_b" {
   vpc_id                  = aws_vpc.main_vpc.id
   cidr_block              = var.cidr_public_subnet_b  # Utilise la plage IP : 10.0.144.0/20
@@ -55,9 +55,9 @@ resource "aws_subnet" "public_subnet_b" {
   }
 }
 
-# === SUBNETS PRIVATE A & B =======================================================
+### SUBNETS PRIVATE A & B ###
 
-# === Sous-réseau privé A ===
+# Sous-réseau privé A
 resource "aws_subnet" "private_subnet_a" {
   vpc_id                  = aws_vpc.main_vpc.id
   cidr_block              = var.cidr_private_subnet_a  # Utilise la plage IP : 10.0.0.0/19
@@ -69,7 +69,7 @@ resource "aws_subnet" "private_subnet_a" {
   }
 }
 
-# === Sous-réseau privé B ===
+# Sous-réseau privé B
 resource "aws_subnet" "private_subnet_b" {
   vpc_id                  = aws_vpc.main_vpc.id
   cidr_block              = var.cidr_private_subnet_b  # Utilise la plage IP : 10.0.32.0/19
@@ -81,9 +81,9 @@ resource "aws_subnet" "private_subnet_b" {
   }
 }
 
-# === NAT GATWAY A & B =======================================================
+### NAT GATEWAY A & B ###
 
-# === Création de la NAT Gateway public A
+# Création de la NAT Gateway public A
 resource "aws_nat_gateway" "gw_public_a" {
   allocation_id = aws_eip.eip_public_a.id
   subnet_id     = aws_subnet.public_subnet_a.id
@@ -91,7 +91,8 @@ resource "aws_nat_gateway" "gw_public_a" {
     Name = "fabien-nat-public-a"
   }
 }
-# === Création de la NAT Gateway  public B
+
+# Création de la NAT Gateway public B
 resource "aws_nat_gateway" "gw_public_b" {
   allocation_id = aws_eip.eip_public_b.id
   subnet_id     = aws_subnet.public_subnet_b.id
@@ -100,9 +101,9 @@ resource "aws_nat_gateway" "gw_public_b" {
   }
 }
 
-# === ROUTES TABLES PUBLIC =======================================================
+### ROUTE TABLES PUBLIC ###
 
-# === Table de routage pour le sous-réseau public A ===
+# Table de routage pour le sous-réseau public A
 resource "aws_route_table" "public_route_a" {
   vpc_id = aws_vpc.main_vpc.id
   route {
@@ -110,25 +111,24 @@ resource "aws_route_table" "public_route_a" {
     gateway_id = aws_internet_gateway.igw.id  # Utilise l'IGW pour la connectivité Internet
   }
   tags = {
-    Name        = "fabien-route-public-a"
+    Name = "fabien-route-public-a"
   }
 }
 
-# === Table de routage pour le sous-réseau public B ===
+# Table de routage pour le sous-réseau public B
 resource "aws_route_table" "public_route_b" {
   vpc_id = aws_vpc.main_vpc.id
-
   route {
     cidr_block = "0.0.0.0/0"  # Route tout le trafic vers l'Internet
     gateway_id = aws_internet_gateway.igw.id  # Utilise l'IGW pour la connectivité Internet
   }
-   tags = {
+  tags = {
     Name        = "fabien-route-public-b"
     Environment = var.environment
   }
 }
 
-# === ROUTES TABLES PRIVE A =======================================================
+### ROUTE TABLES PRIVE A ###
 
 # Crée une table de routage pour le sous-réseau privé A
 resource "aws_route_table" "rtb_app_a" {
@@ -137,12 +137,12 @@ resource "aws_route_table" "rtb_app_a" {
     Name = "fabien-routetable-private-a"  # Nom de la table
   }
 }
+
 # Ajoute une route pour rediriger le trafic vers la NAT Gateway
 resource "aws_route" "route_private_a_nat" {
   route_table_id         = aws_route_table.rtb_app_a.id  # Spécifie la table de routage
   destination_cidr_block = "0.0.0.0/0"  # Tout le trafic sortant
   nat_gateway_id         = aws_nat_gateway.gw_public_a.id  # Redirige vers la NAT Gateway
-
 }
 
 # Association de la table de routage privée avec le sous-réseau privé A
@@ -151,7 +151,7 @@ resource "aws_route_table_association" "rta_subnet_association_priv_a" {
   route_table_id = aws_route_table.rtb_app_a.id    # Table de routage privée A
 }
 
-# === ROUTES TABLES PRIVE B =======================================================
+### ROUTE TABLES PRIVE B ###
 
 # Crée une table de routage pour le sous-réseau privé B
 resource "aws_route_table" "rtb_app_b" {
@@ -174,31 +174,16 @@ resource "aws_route_table_association" "rta_subnet_association_priv_b" {
   route_table_id = aws_route_table.rtb_app_b.id    # Table de routage privée B
 }
 
+### ASSOCIATION TABLE PUBLIC A & B ###
 
-
-
-# === ASSOCIATION TABLE PUBLIC A & B =======================================================
-
-
-# === Association de la table de routage avec le sous-réseau public A ===
+# Association de la table de routage avec le sous-réseau public A
 resource "aws_route_table_association" "rta_subnet_association_pub_a" {
   subnet_id      = aws_subnet.public_subnet_a.id
   route_table_id = aws_route_table.public_route_a.id
 }
 
-# === Association de la table de routage avec le sous-réseau public B ===
+# Association de la table de routage avec le sous-réseau public B
 resource "aws_route_table_association" "rta_subnet_association_pub_b" {
   subnet_id      = aws_subnet.public_subnet_b.id
   route_table_id = aws_route_table.public_route_b.id
 }
-
-
-
-
-
-
-
-
-
-
-

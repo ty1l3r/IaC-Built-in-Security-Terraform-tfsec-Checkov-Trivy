@@ -1,119 +1,91 @@
-# variables.tf
-
-##### USE
-
-# variable "enable_https" {
-#   description = "Activer HTTPS pour le ALB"
-#   type        = bool
-#   default     = false
-# }
-
-# variable "bastion_sg_id" {
-#   description = "Liste des IDs des sous-réseaux où le RDS sera déployé"
-#   type        = list(string)
-# }
-
-# variable "private_wp_sg_id" {
-#   description = "Liste des IDs des Security Groups privés pour les instances WP"
-#   type        = list(string)
-# }
-
-# Variable pour l'ID du Bastion
+# ID du Bastion
 variable "bastion_id" {
   description = "L'ID du Bastion"
   type        = string
-  default = ""
+  default     = ""
 }
 
-# variable "certificate_arn" {
-#   type        = string
-#   description = "ARN du certificat SSL pour HTTPS"
-#   default     = null  # Définit par défaut à null si aucun certificat n'est fourni
-# }
-
+# Nom de l'ALB
 variable "alb_name" {
   description = "Nom de l'Application Load Balancer"
   type        = string
   default     = "my-alb"
 }
 
+# Zone de disponibilité A
 variable "az_a" {
   description = "zone de disponibilité a"
   default     = "eu-west-3a"
 }
 
+# Zone de disponibilité B
 variable "az_b" {
-  description = "zone de disponibilité a"
+  description = "zone de disponibilité b"
   default     = "eu-west-3b"
 }
 
+# CIDR sous-réseau public A
 variable "cidr_public_subnet_a" {
   description = "CIDR du sous reseaux public a"
-  type = string
-  default = "10.0.128.0/20"
+  type        = string
+  default     = "10.0.128.0/20"
 }
 
+# CIDR sous-réseau public B
 variable "cidr_public_subnet_b" {
-  description = "CIDR du sous reseaux public a"
-  type = string
-  default = "10.0.144.0/20"
+  description = "CIDR du sous reseaux public b"
+  type        = string
+  default     = "10.0.144.0/20"
 }
 
+# CIDR sous-réseau privé A
 variable "cidr_private_subnet_a" {
   description = "CIDR du sous reseaux private a"
-  type = string
-  default = "10.0.0.0/19"
+  type        = string
+  default     = "10.0.0.0/19"
 }
 
+# CIDR sous-réseau privé B
 variable "cidr_private_subnet_b" {
   description = "CIDR du sous reseaux private b"
-  type = string
-  default = "10.0.32.0/19"
+  type        = string
+  default     = "10.0.32.0/19"
 }
 
+# Nom du projet
 variable "project" {
   description = "fabien-Terraform-Project"
   type        = string
 }
 
-# Définition des variables pour l'environnement et le projet
+# Environnement (ex: Prod)
 variable "environment" {
   description = "Prod"
   type        = string
 }
 
-/////////////
-
-# variables.tf (Module racine)
+# Créer réplique en lecture
 variable "create_read_replica" {
   description = "Créer une réplique en lecture (true/false)"
   type        = bool
-  default     = false  # Par défaut, ne pas créer de réplique en lecture
+  default     = false
 }
 
-
-# # Type d'instance pour le Bastion Host
-# variable "bastion_instance_type" {
-#   description = "Type d'instance pour le Bastion Host"
-#   type        = string
-#   default     = "t2.micro"
-# }
-
-# Type d'instance pour les serveurs WordPress
+# Type instance WordPress
 variable "web_instance_type" {
   description = "Type d'instance pour les serveurs WordPress"
   type        = string
   default     = "t2.micro"
 }
 
-# Nombre d'instances WordPress à déployer
+# Nombre instances WordPress
 variable "web_instance_count" {
   description = "Nombre d'instances pour WordPress"
   type        = number
   default     = 2
 }
 
-# Zones de disponibilité (AZs) dans lesquelles déployer les sous-réseaux
+# Liste des AZs
 variable "availability_zones" {
   description = "Liste des zones de disponibilité pour les sous-réseaux"
   type        = list(string)
@@ -123,58 +95,58 @@ variable "availability_zones" {
   ]
 }
 
+# Activer Multi-AZ
 variable "multi_az" {
   description = "Activer le déploiement Multi-AZ"
   type        = bool
-  default     = true  # Activer par défaut pour la haute disponibilité
+  default     = true
 }
 
+# Type d'instance RDS
 variable "db_instance_class" {
   description = "Type d'instance pour RDS"
   type        = string
-  default     = "db.t3.micro"  # Vous pouvez ajuster cette valeur selon vos besoins
+  default     = "db.t3.micro"
 }
 
+# CIDR bloc du VPC
 variable "vpc_cidr" {
   description = "CIDR block for the VPC"
   type        = string
   default     = "10.0.0.0/16"
 }
 
-
+# Nom de la base de données
 variable "db_name" {
   description = "Name of the RDS database"
   type        = string
   default     = "wordpressdb"
 }
 
+# Nom utilisateur RDS
 variable "db_username" {
   description = "Username for the RDS database"
   type        = string
   default     = "admin"
 }
 
+# Mot de passe RDS
 variable "db_password" {
   description = "Password for the RDS database"
   type        = string
   sensitive   = true
 }
 
+# Groupe sous-réseaux RDS
 variable "db_subnet_group" {
   description = "Nom du groupe de sous-réseaux pour RDS"
   type        = any
   default     = "my-db-subnet-group"
 }
 
+# Nom du security group VPC
 variable "vpc_security_group_name" {
   description = "Nom du Security Group pour le VPC"
   type        = string
-  default     = "vpc_security_group"  # Vous pouvez définir un nom par défaut ici
+  default     = "vpc_security_group"
 }
-
-/*
-variable "vpc_id" {
-  description = "Id du VPC par défaut"
-  type        = string
-  default     = "vpc-075d7129a250b342d"
-}*/

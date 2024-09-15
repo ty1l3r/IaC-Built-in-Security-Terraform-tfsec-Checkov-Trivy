@@ -6,12 +6,6 @@ output "db_subnet_group" {
   description = "Nom du groupe de sous-réseaux pour l'instance RDS"
 }
 
-# Output des IDs des groupes de sécurité associés à l'instance RDS
-# output "rds_security_group_id" {
-#   value       = aws_security_group.rds.id
-#   description = "Liste des IDs des groupes de sécurité associés à l'instance RDS"
-# }
-
 # Output du nom de la base de données
 output "db_name" {
   value       = var.db_name
@@ -56,16 +50,3 @@ output "rds_endpoint" {
   value = aws_db_instance.main.address
   description = "The RDS instance endpoint"
 }
-
-
-# output "rds_hostname" {
-#   description = "RDS instance hostname"
-#   value       = aws_db_instance.education.address
-#   sensitive   = true
-# }
-
-# output "rds_port" {
-#   description = "RDS instance port"
-#   value       = aws_db_instance.education.port
-#   sensitive   = true
-# }

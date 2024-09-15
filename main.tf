@@ -1,8 +1,9 @@
-# main.tf root
+# Module AMI : Récupère l'AMI (Amazon Machine Image) pour les instances EC2
 module "ami" {
   source = "./modules/ami"
 }
 
+# Module Bastion : Déploie une instance Bastion Host pour gérer les accès SSH dans les sous-réseaux publics
 module "bastion" {
   source                = "./modules/bastion"
   vpc_id                = module.vpc.vpc_id
@@ -11,20 +12,19 @@ module "bastion" {
   key_name              = module.ec2.key_name
 }
 
-
-# Module VPC : Crée le VPC, les sous-réseaux publics/privés, et les security groups de base
+# Module VPC : Crée un VPC, les sous-réseaux publics/privés, et configure les zones de disponibilité (AZ)
 module "vpc" {
   source                = "./modules/vpc"
   vpc_cidr              = var.vpc_cidr
-  cidr_public_subnet_a  = var.cidr_public_subnet_a   #var.cidr_public_subnet_a
-  cidr_public_subnet_b  = var.cidr_public_subnet_b  #var.cidr_public_subnet_b
+  cidr_public_subnet_a  = var.cidr_public_subnet_a
+  cidr_public_subnet_b  = var.cidr_public_subnet_b
   cidr_private_subnet_a = var.cidr_private_subnet_a
-  cidr_private_subnet_b = var.cidr_private_subnet_b #var.cidr_private_subnet_b
+  cidr_private_subnet_b = var.cidr_private_subnet_b
   az_a                  = var.az_a
   az_b                  = var.az_b
 }
 
-# Module RDS : Crée la base de données RDS, en utilisant les sous-réseaux privés pour la haute disponibilité
+# Module RDS : Crée une base de données RDS dans les sous-réseaux privés avec la haute disponibilité (Multi-AZ)
 module "rds" {
   source                 = "./modules/rds"
   db_instance_class      = var.db_instance_class
@@ -36,11 +36,11 @@ module "rds" {
   subnet_ids             = [module.rds.subnet_ids]
   create_read_replica    = var.create_read_replica
   vpc_id                 = module.vpc.vpc_id
-  private_subnet_a_id = module.vpc.private_subnet_a_id
-  private_subnet_b_id = module.vpc.private_subnet_b_id
+  private_subnet_a_id    = module.vpc.private_subnet_a_id
+  private_subnet_b_id    = module.vpc.private_subnet_b_id
 }
 
-# Module EC2 : Déploie les instances EC2 pour le Bastion Host et les serveurs WordPress
+# Module EC2 : Déploie des instances EC2 pour WordPress et le Bastion Host dans des sous-réseaux privés
 module "ec2" {
   source                    = "./modules/ec2"
   vpc_id                    = module.vpc.vpc_id
@@ -53,11 +53,10 @@ module "ec2" {
   bastion_sg_id             = [module.bastion.bastion_sg_id]
   launch_template_id        = module.alb.wordpress_launch_template_id
   target_group_arn          = module.alb.target_group_arn
-  alb_security_group_id = [module.alb.alb_security_group_id]
-
-
+  alb_security_group_id     = [module.alb.alb_security_group_id]
 }
 
+# Module ALB : Configure un Application Load Balancer (ALB) pour diriger le trafic vers les instances WordPress
 module "alb" {
   source              = "./modules/alb"
   vpc_id              = module.vpc.vpc_id
@@ -70,4 +69,3 @@ module "alb" {
   web_instance_type   = var.web_instance_type
   rds_endpoint        = module.rds.rds_endpoint
 }
-

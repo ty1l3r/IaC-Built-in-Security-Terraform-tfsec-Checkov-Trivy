@@ -35,7 +35,6 @@ resource "aws_security_group" "alb" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]  # Autoriser tout le trafic sortant
   }
-
   tags = {
     Name = "WT-ALBSecurityGroup"
   }
