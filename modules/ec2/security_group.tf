@@ -4,11 +4,12 @@ resource "aws_security_group" "sg_private_wp" {
   vpc_id = var.vpc_id
 
   tags = {
-    Name = "WT-sg-private-wp"
+    Name = "Fabien-sg-private-wp"
   }
 
   # Ingress rules (entrées)
 
+  #DESACTIVER APRES LA GESTION DE L'HTTPS
   # Autoriser le trafic HTTP (port 80) venant de l'ALB
   ingress {
     from_port   = 80
@@ -30,7 +31,8 @@ resource "aws_security_group" "sg_private_wp" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/16"]  # Autoriser SSH depuis le Bastion
+    #cidr_blocks = ["10.0.0.0/16"]  # Autoriser SSH depuis le Bastion
+    security_groups = var.bastion_sg_id
   }
 
   # Egress rules (sorties)
@@ -40,7 +42,9 @@ resource "aws_security_group" "sg_private_wp" {
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # Permissif : autoriser toutes les connexions vers RDS
+    # REDIRIGER VERS LE GROUPE DE SECURITE DU BASTION OU IP RESEAU PRIVES
+    cidr_blocks = ["10.0.0.0/19"]
+    #cidr_blocks = ["0.0.0.0/0"]  # Permissif : DEBUG
   }
 
   # Egress SSH (port 22) sortant — autorisation de SSH sortant (vers Bastion ou autre)
@@ -48,7 +52,8 @@ resource "aws_security_group" "sg_private_wp" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # Permissif : SSH sortant
+    #cidr_blocks = ["0.0.0.0/0"]  # Permissif : SSH sortant
+    security_groups = var.bastion_sg_id
   }
 
   # Permettre tout autre trafic sortant (par défaut)

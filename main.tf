@@ -68,4 +68,6 @@ module "alb" {
   private_wp_sg_id    = [module.ec2.private_wp_sg_id]
   web_instance_type   = var.web_instance_type
   rds_endpoint        = module.rds.rds_endpoint
+  db_password = var.db_password
+  db_username = var.db_username
 }

@@ -1,9 +1,10 @@
+# Reservé aux administrateurs.
 resource "aws_security_group" "sg_bastion" {
   name   = "sg_bastion"
   vpc_id = var.vpc_id
 
   tags = {
-    Name = "WT-sg-bastion"
+    Name = "Fabien-sg-bastion"
   }
 
   # Autoriser SSH depuis l'Internet (pour l'administrateur)
@@ -11,6 +12,7 @@ resource "aws_security_group" "sg_bastion" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
+    #ENTRER L'ADDRESSE IP DES ADMINISTRATEURS
     cidr_blocks = ["0.0.0.0/0"]  # Permettre les connexions SSH depuis n'importe où
   }
 

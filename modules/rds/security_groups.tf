@@ -7,13 +7,16 @@ resource "aws_security_group" "rds" {
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
+    #Block sous réseaux privés.
     cidr_blocks = ["10.0.0.0/19", "10.0.32.0/19"]  # Assure-toi que ces plages correspondent à tes sous-réseaux privés
   }
 
+  # Vers les sous reseau privé uniquement !
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    #cidr_blocks = ["10.0.0.0/19", "10.0.32.0/19"]
   }
 }

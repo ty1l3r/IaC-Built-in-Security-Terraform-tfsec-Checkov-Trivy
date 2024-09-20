@@ -15,14 +15,12 @@ variable "db_instance_class" {
 variable "db_name" {
   description = "Nom de la base de données MySQL"
   type        = string
-  #default     = "fabien-database"
 }
 
 # Nom d'utilisateur administrateur pour MySQL
 variable "db_username" {
   description = "Nom d'utilisateur administrateur pour MySQL"
   type        = string
-  #default     = "admin"
   sensitive   = true
 }
 

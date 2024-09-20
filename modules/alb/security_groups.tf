@@ -1,9 +1,11 @@
+# NET VERS LE BASTION
 # Groupe de sécurité pour ALB (Application Load Balancer)
 resource "aws_security_group" "alb" {
-  name        = "alb_security_group-WT"
+  name        = "Fabien-alb_security_group"
   description = "Security group for ALB"
   vpc_id      = var.vpc_id
 
+  # A RETIRER APRES LA GESTION DU HTTPS
   # Autoriser HTTP depuis n'importe où (Internet)
   ingress {
     from_port   = 80
@@ -20,22 +22,23 @@ resource "aws_security_group" "alb" {
     cidr_blocks = ["0.0.0.0/0"]  # HTTPS depuis n'importe où
   }
 
-    # Egress vers les sous-réseaux privés (pour atteindre les instances EC2 WordPress)
+  # Restreindre le trafic sortant uniquement vers les sous-réseaux privés pour HTTP (port 80)
   egress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/19", "10.0.32.0/19"]  # Envoyer le trafic HTTP vers les instances EC2
+    cidr_blocks = ["10.0.0.0/19", "10.0.32.0/19"]  # Trafic HTTP vers les sous-réseaux privés (instances EC2)
   }
 
-  # Autoriser tout le trafic sortant
+  # Restreindre le trafic sortant uniquement vers les sous-réseaux privés pour HTTPS (port 443)
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]  # Autoriser tout le trafic sortant
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/19", "10.0.32.0/19"]  # Trafic HTTPS vers les sous-réseaux privés (instances EC2)
   }
+
   tags = {
-    Name = "WT-ALBSecurityGroup"
+    Name = "Fabien-ALBSecurityGroup"
   }
 }

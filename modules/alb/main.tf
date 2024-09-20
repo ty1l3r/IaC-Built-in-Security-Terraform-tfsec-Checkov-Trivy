@@ -64,6 +64,9 @@ resource "aws_launch_template" "wordpress" {
   # Script de démarrage pour initialiser WordPress avec l'accès RDS
   user_data = base64encode(templatefile("${path.root}/wp.sh", {
     rds_endpoint = var.rds_endpoint,
+    db_username  = var.db_username,
+    db_password = var.db_password
+
     WORDPRESS_DIR = "/var/www/html"
   }))
 

@@ -2,8 +2,8 @@
 
 # variables
 DB_NAME="fabienDatabase"            # Name of the database
-DB_USER="admin"                     # Database username
-DB_PASSWORD="adminadmin"            # Database password
+DB_USER="${db_username}"                    # Database username
+DB_PASSWORD="${db_password}"           # Database password
 WORDPRESS_DIR="/var/www/html"       # WordPress code directory
 RDS_ENDPOINT="${rds_endpoint}"       # Directly use the endpoint with port
 

@@ -1,4 +1,15 @@
 # Endpoint de l'instance RDS
+variable "db_username" {
+  type      = string
+  description = "Entrer le nom de la BDD"
+  sensitive = true
+}
+variable "db_password" {
+  type      = string
+  description = "Mot de passe de la base de donné (8 caractères min)"
+  sensitive = true
+}
+
 variable "rds_endpoint" {
   description = "L'endpoint de l'instance RDS"
   type        = string

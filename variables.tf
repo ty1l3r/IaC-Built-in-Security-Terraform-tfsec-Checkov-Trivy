@@ -1,3 +1,14 @@
+variable "db_username" {
+  type      = string
+  description = "Entrer le nom de la BDD"
+  sensitive = true
+}
+variable "db_password" {
+  type      = string
+  description = "Mot de passe de la base de donné (8 caractères min)"
+  sensitive = true
+}
+
 # ID du Bastion
 variable "bastion_id" {
   description = "L'ID du Bastion"
@@ -124,18 +135,17 @@ variable "db_name" {
 }
 
 # Nom utilisateur RDS
-variable "db_username" {
-  description = "Username for the RDS database"
-  type        = string
-  default     = "admin"
-}
+# variable "db_username" {
+#   description = "Username for the RDS database"
+#   type        = string
+# }
 
-# Mot de passe RDS
-variable "db_password" {
-  description = "Password for the RDS database"
-  type        = string
-  sensitive   = true
-}
+# # Mot de passe RDS
+# variable "db_password" {
+#   description = "Password for the RDS database"
+#   type        = string
+#   sensitive   = true
+# }
 
 # Groupe sous-réseaux RDS
 variable "db_subnet_group" {

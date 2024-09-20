@@ -4,6 +4,12 @@ variable "alb_security_group_id" {
   type        = list(string)
 }
 
+# ID du groupe de sécurité privé WordPress
+variable "private_wp_sg_id" {
+  description = "ID du groupe de sécurité privé WordPress"
+  type        = string
+}
+
 # ID du Security Group du Bastion Host
 variable "bastion_sg_id" {
   description = "ID du Security Group du Bastion"
@@ -28,12 +34,6 @@ variable "vpc_id" {
   type        = string
 }
 
-# ID du groupe de sécurité privé WordPress
-variable "private_wp_sg_id" {
-  description = "ID du groupe de sécurité privé WordPress"
-  type        = string
-}
-
 # Type d'instance pour le Bastion Host
 variable "app_instance_type" {
   description = "Type d'instance pour le Bastion Host"
@@ -50,7 +50,7 @@ variable "web_instance_type" {
 
 # Nom du projet Terraform
 variable "project" {
-  description = "Terraform -WP"
+  description = "Fabien-terraform"
   type        = string
 }
 
